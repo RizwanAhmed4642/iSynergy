@@ -1,0 +1,84 @@
+﻿@model IEnumerable<iSynergy.Areas.DMS.Models.FolderRight>
+
+@{
+    ViewBag.Title = "Folder Roles";
+}
+
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <div class="table-responsive" data-pattern="priority-columns">
+                    <a href="@Url.Action("Create")"><Span class="btn btn-success btn-icon background bottom15 pull-right"><i class="fa fa-plus"></i> &nbsp; Add New Folder Role</Span></a>
+                    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+                    <table id="grid" class="table table-striped table-bordered" cellspacing="0">
+
+                        <thead>
+
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.DocumentAccessRole.Name)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.DocumentFolder.Name)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.hasWriteAccess)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DocumentAccessRole.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DocumentFolder.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.hasWriteAccess)
+                                    </td>
+                                    <td align="center">
+                                        <a href="@Url.Action("Edit", "FolderRoles", new { id = item.FolderRightsId })"><span><i class="fa fa-pencil"></i></span></a> |
+                                        <a href="@Url.Action("Details", "FolderRoles", new { id = item.FolderRightsId })"><span><i class="fa fa-eye"></i></span></a> |
+                                        <a href="@Url.Action("Delete", "FolderRoles", new { id = item.FolderRightsId })"><span><i class="fa fa-trash"></i></span></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+    <script type="text/javascript">
+            $(document).ready(function () {
+                $('#grid').DataTable({
+                    "pageLength": 100
+                });
+            });
+    </script>
+}
+
+
+<table class="table">
+    
+
+
+
+</table>

@@ -1,0 +1,400 @@
+﻿@model  iSynergy.Areas.Procurement.Models.RequisitionReviewViewModel
+
+@{
+    ViewBag.Title = "Review Requistion";
+}
+
+<!--Requisition Summary Section-->
+<div class="col-xs-12">
+    <section class="box" style="border-left: 3px solid #e77512;">
+        <header class="panel_header">
+            <h2 class="title pull-left">@Model.requisition.Description</h2>
+        </header>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <table class="table table-small-font no-mb table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Requisition Id</th>
+                                <th data-priority="1">Request Date</th>
+                                <th data-priority="3">Requested by</th>
+                                <th data-priority="1">Pending with</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@Model.requisition.RequisitionId</td>
+                                <td>@Model.requisition.creationDate.ToString("dd.MMM.yyyy")</td>
+                                <td>@Model.requisition.Employee.Name</td>
+                                <td>@Model.employeeIdToNameConverter[Model.requisition.pendingWith]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!--Requistion Items Section-->
+<div id="RequisitionItemsPanel" class="col-xs-12">
+    <section class="box" style="border-left: 3px solid #e77512;">
+        <header class="panel_header">
+            <h2 class="title pull-left">Requisition Item Details</h2>
+        </header>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="table-responsive" data-pattern="priority-columns">
+                        <table class="table table-small-font no-mb table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="col-xs-6">Item</th>
+                                    <th data-priority="1">Quantity</th>
+                                    <th data-priority="3">Unit Price</th>
+                                    <th data-priority="1">Total</th>
+                                    <th data-priority="1" class="col-xs-1">Attachment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.requisitionItems)
+                                {
+                                    <tr>
+                                        <td class="col-xs-6">@item.ItemName</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@String.Format("{0:n}", item.UnitPrice)</td>
+                                        <td>@String.Format("{0:n}", (item.UnitPrice * item.Quantity))</td>
+                                        <td class="col-xs-1">
+                                            @if (item.File != null)
+                                            {
+                                                <a href="@Url.Action("Index", "DownloadAttachment", new {area = "", id = item.File })">
+                                                    @*<img src="~/images/paperclip.gif" style="height:25px; width: 25px; overflow: hidden;"/>*@
+                                                    <span class="fa fa-paperclip fa-lg"></span>
+                                                </a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="control-label"><strong>Grand Total:</strong></td>
+                                    <td class="control-label"><strong>@String.Format("{0:n}", Model.requisitionItems.Sum(i => (i.UnitPrice * i.Quantity)))</strong></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<!--Things that only management should see-->
+@if (Model.isOperationsHeadReviewing || Model.isFinanceManagerReviewing || Model.isCooReviewing || Model.isProcurementManagerReviewing)
+{
+    if (Model.requisitionQuotations.Count() > 0)
+    {
+			<!--Quotations-->
+
+        <div id="RequisitionQuotationsPanel" class="col-xs-12">
+            <section class="box" style="border-left: 3px solid #e77512;">
+                <header class="panel_header">
+                    <h2 class="title pull-left">Quotations</h2>
+                </header>
+                <div class="content-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="table table-small-font no-mb table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="col-xs-8">Supplier</th>
+                                        <th class="col-xs-3">Price</th>
+                                        <th class="col-xs-1">Attachment</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var quotation in Model.requisitionQuotations)
+                                    {
+                                        <tr>
+                                            <td>@quotation.SupplierName</td>
+                                            <td>@String.Format("{0:n}", quotation.QuotationPrice)</td>
+                                            <td>
+                                                <a href="@Url.Action("Index", "DownloadAttachment", new {area = "", id = quotation.File })">
+                                                    @*<img src="~/images/paperclip.gif" style="height:25px; width: 25px; overflow: hidden;" />*@
+                                                    <span class="fa fa-paperclip fa-lg"></span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    }
+	<!--Bill(s) Section-->
+    foreach (var bill in Model.requisitionBills)
+    {
+        <a href="@Url.Action("Index", "DownloadAttachment", new {area = "", id = bill.File })">
+            <div class="col-lg-4 col-sm-6 col-xs-12">
+                <div class="r4_counter db_box">
+                    <div class="icon-after fa fa-paperclip pull-left"></div>
+                    <div class="stats">
+                        <h3 class="mb-5">@Model.requisition.PurchaseAmount</h3>
+                        <span>Click to view bill</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    }
+
+    <!--Amounts-->
+    <div id="total-market-cap" class="col-md-4"><div class="card"><strong class="title">Amount Requested</strong><h1 class="_value_">@String.Format("{0:n}", Model.requisition.TotalAmountRequested)</h1></div></div>
+    <div id="total-market-cap" class="col-md-4"><div class="card"><strong class="title">Amount Approved</strong><h1 class="_value_">@String.Format("{0:n}", Model.requisition.TotalAmountApproved)</h1></div></div>
+    <div id="total-market-cap" class="col-md-4"><div class="card"><strong class="title">Amount Issued</strong><h1 class="_value_">@String.Format("{0:n}", Model.requisition.TotalAmountIssued)</h1></div></div>
+    <div id="total-market-cap" class="col-md-4"><div class="card"><strong class="title">Purchase Amount</strong><h1 class="_value_">@String.Format("{0:n}", Model.requisition.PurchaseAmount)</h1></div></div>
+    <div id="total-market-cap" class="col-md-4"><div class="card"><strong class="title">Discount</strong><h1 class="_value_">@String.Format("{0:n}", Model.requisition.DiscountReturned)</h1></div></div>
+}
+
+<!--Approval History Section-->
+<div class="col-lg-12">
+    <section class="box ">
+        <header class="panel_header">
+            <h2 class="title pull-left">Approval History</h2>
+            <div class="actions panel_actions pull-right">
+                <a class="box_close fa fa-times"></a>
+            </div>
+        </header>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-xs-12">
+
+                    <!-- start -->
+                    <ul class="timeline">
+                        @{ int index = 0;}
+                        @foreach (var reqEvent in Model.requisitionEvents)
+                        {
+                            index += 1;
+                            var state = "";
+                            var icon = "";
+                            switch ((int)reqEvent.EventState)
+                            {
+                                case 0:
+                                    state = "Pending";
+                                    icon = "fa fa-clock-o";
+                                    break;
+                                case 1:
+                                    state = "Rejected";
+                                    icon = "fa fa-thumbs-down";
+                                    break;
+                                case 2:
+                                    state = "Manager Approved";
+                                    icon = "fa fa-thumbs-up";
+                                    break;
+                                case 3:
+                                    state = "Final Approved";
+                                    icon = "fa fa-check";
+                                    break;
+                                case 4:
+                                    state = "Cash Issued";
+                                    icon = "fa fa-money";
+                                    break;
+                                case 5:
+                                    state = "Partial Cash Issued";
+                                    icon = "fa fa-money";
+                                    break;
+                                case 6:
+                                    state = "Partial Cash Received";
+                                    icon = "fa fa-money";
+                                    break;
+                                case 7:
+                                    state = "Cash Received";
+                                    icon = "fa fa-money";
+                                    break;
+                                case 8:
+                                    state = "Partial Delivered";
+                                    icon = "fa fa-paper-plane";
+                                    break;
+                                case 9:
+                                    state = "Delivered";
+                                    icon = "fa fa-paper-plane";
+                                    break;
+                                case 10:
+                                    state = "Closed";
+                                    icon = "fa fa-circle";
+                                    break;
+                                case 11:
+                                    state = "Pending for COO's Approval";
+                                    icon = "fa fa-clock-o";
+                                    break;
+                                case 12:
+                                    state = "Pending for Quotations";
+                                    icon = "fa fa-clock-o";
+                                    break;
+                                case 13:
+                                    state = "Quotations Acquired";
+                                    icon = "fa fa-inbox";
+                                    break;
+                                case 14:
+                                    state = "Reapproval Required";
+                                    icon = "fa fa-undo";
+                                    break;
+                            }
+                            <li class="@(index % 2 == 0 ? "timeline-inverted" : "")">
+                                <div class="timeline-badge warning animated flipInY"><i class="@icon"></i></div>
+                                <div class="timeline-panel animated flipInY">
+                                    <div class="timeline-heading">
+                                        <h4 class="timeline-title">@state</h4>
+                                        <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> @reqEvent.EventDate.ToString("dd.MMM.yyyy") by @Model.employeeIdToNameConverter[reqEvent.RespondedBy]</small></p>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p>@reqEvent.Comments</p>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+
+                    </ul>
+                    <!-- end -->
+
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@if (!Model.readOnlyAccess)
+            {
+    <div class="col-xs-12">
+        <section class="box has-border-left-3">
+            <header class="panel_header">
+                <h2 class="title pull-left">Take Action</h2>
+                <div class="actions panel_actions pull-right">
+                </div>
+            </header>
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!--Inputs Section-->
+                        @using (Html.BeginForm("Review", "Requisitions", FormMethod.Post, new { area = "Procurement", encType = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken();
+                            <input type="hidden" name="newEvent.RequisitionId" value="@Model.requisition.RequisitionId" />
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+                            if (
+                                Model.requisition.TotalAmountRequested > 0
+                                && Model.requisitionQuotations.Count() > 0
+                                && (Model.isOperationsHeadReviewing || Model.isCooReviewing))
+                            {
+                                @Html.LabelFor(model => model.selectedQuotationId, htmlAttributes: new { @class = "form-label" })
+                                <div class="controls">
+                                    @Html.DropDownListFor(model => model.selectedQuotationId,
+                                                        new SelectList(ViewBag.Quotations,
+                                                                        "QuotationId",
+                                                                        "QuotationName"
+                                                                        ),
+                                                        "--select quotation--",
+                                                        htmlAttributes: new { @class = "form-label" }
+                                                        )
+                                    @Html.ValidationMessageFor(model => model.selectedQuotationId, "", new { @class = "text-danger" })
+                                </div>
+                            }
+                            if (Model.requisition.CurrentState != iSynergy.Areas.Procurement.Models.RequisitionStates.Closed)
+                            {
+                                @Html.LabelFor(model => model.newEvent.Comments, htmlAttributes: new { @class = "form-label" })
+                                <div class="controls">
+                                    @Html.EditorFor(model => model.newEvent.Comments, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.requisition.Description, "", new { @class = "text-danger" })
+                                </div>
+                                <br />
+                            <!-- Buttons -->
+                                <div id="buttons" class="form-group">
+
+                                    @if (Model.requisition.CurrentState == iSynergy.Areas.Procurement.Models.RequisitionStates.CashReceived)
+                                    {
+                                    <!-- Input filed to mention the actual purchase price -->
+                                        @Html.LabelFor(model => model.requisition.PurchaseAmount, htmlAttributes: new { @class = "form-label" })
+                                        <div class="controls">
+                                            @Html.EditorFor(model => model.requisition.PurchaseAmount, new { htmlAttributes = new { @class = "form-control", @Value = "" } })
+                                            @Html.ValidationMessageFor(model => model.requisition.PurchaseAmount, "", new { @class = "text-danger" })
+                                        </div>
+                                    <!-- file upload control for attaching the bills -->
+                                        @Html.LabelFor(model => model.Bills, htmlAttributes: new { @class = "form-label" })
+                                        <div class="controls">
+                                            @Html.TextBoxFor(model => model.Bills, new { type = "file", name = "Files", multiple = "multiple", @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Bills, "", new { @class = "text-danger" })
+                                        </div>
+                                    }
+
+
+                                    @if (Model.requisition.CurrentState == iSynergy.Areas.Procurement.Models.RequisitionStates.CashIssued)
+                                    {
+                                        <button name="eventAction" value="CashReceived" class="btn btn-sm btn-success">Cash Received</button>
+                                    }
+                                    else if (Model.requisition.CurrentState == iSynergy.Areas.Procurement.Models.RequisitionStates.CashReceived)
+                                    {
+
+                                        <button name="eventAction" value="Delivered" class="btn btn-sm btn-success">Items Delivered</button>
+                                    }
+                                    else if (Model.requisition.CurrentState == iSynergy.Areas.Procurement.Models.RequisitionStates.Delivered)
+                                    {
+                                        <button name="eventAction" value="Received" class="btn btn-sm btn-success">Receive and Close</button>
+                                    }
+                                    else if (Model.requisition.CurrentState == iSynergy.Areas.Procurement.Models.RequisitionStates.Rejected)
+                                    {
+                                        <div class="col-xs-12">
+                                            <!-- show nothing. -->
+                                        </div>
+                                    }
+                                    else
+                                    {
+
+                                        if (!Model.isOperationsHeadReviewing && !Model.isCooReviewing)
+                                        {
+                                            <button name="eventAction" value="Approved" class="btn btn-sm btn-success">Approve</button>
+                                        }
+                                        else
+                                        {
+                                            if (Model.requisition.TotalAmountRequested > 0)
+                                            {
+                                                <button name="eventAction" value="Approved" class="btn btn-sm btn-success">Approve</button>
+                                            }
+                                        }
+
+                                        @* button to reject *@
+                                        <button name="eventAction" value="Rejected" class="btn btn-sm btn-danger">Reject</button>
+
+                                        @* following buttons should only be shown if local operations head is reviewing *@
+                                    if (Model.isOperationsHeadReviewing)
+                                    {
+                                        <button name="eventAction" value="RequestQuotations" class="btn btn-sm btn-info">Request Quotations</button>
+                                        if (Model.requisition.TotalAmountRequested > 0)
+                                        {
+                                            <button name="eventAction" value="ForwardToCoo" class="btn btn-sm btn-success">Forward to COO</button>
+                                        }
+                                    }
+                                    else if (Model.isOperationsHeadReviewing)
+                                    {
+                                        <button name="eventAction" value="RequestQuotations" class="btn btn-sm btn-info">Request Quotations</button>
+                                        }
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+}
+
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval");
+}

@@ -1,0 +1,124 @@
+﻿<!-- SIDEBAR - START -->
+@{ 
+
+    var Categories = (IEnumerable<iSynergy.Areas.DMS.Models.DocumentCategory>)ViewBag.DocumentCategories;
+    var thisGuy = (iSynergy.Areas.HR.Models.Employee)ViewBag.thisGuy;
+    var activeCategory = (iSynergy.Areas.DMS.Models.DocumentCategory)ViewBag.Category;
+}
+<div class="page-sidebar fixedscroll">
+
+    <!-- MAIN MENU - START -->
+    <div class="page-sidebar-wrapper" id="main-menu-wrapper">
+
+
+        <ul class='wraplist'>
+            <li class="open">
+                <a href="javascript:;"> <i class="fa fa-search"></i> <span class="title">Browse</span> <span class="arrow"></span> </a>
+                <ul class="sub-menu" style="display: none;">
+                    @{
+
+                        var folders = iSynergy.Areas.DMS.Shared.ArchivingFunctions.getAuthorizedFolders(thisGuy);
+
+                        foreach (var folder in folders)
+                        {
+                            string cls = "";
+                            if (activeCategory != null)
+                            {
+                                cls = activeCategory.DocuementFolderId == folder.DocumentFolderId ? "open" : "";
+                            }
+                            
+                            <li class="@cls">
+                                <a href="javascript:;"> <i class="fa fa-folder-open"></i> <span class="title">@folder.Name</span> <span class="arrow"></span> </a>
+                                <ul class="sub-menu" style="display: none;">
+
+                                    <li class="">
+                                        @{
+                                            var categories = iSynergy.Areas.DMS.Shared.ArchivingFunctions.getAllCategories(folder);
+                                            foreach (var category in categories)
+                                            {
+                                                if (activeCategory != null)
+                                                {
+                                                    cls = activeCategory.DocumentCategoryId == category.DocumentCategoryId ? "active" : "";
+                                                }
+                                                else
+                                                {
+                                                    cls = "";
+                                                }
+                                                <a class="@cls" href="~/DMS/Home/Index/@category.DocumentCategoryId">
+                                                    <span class="title">@category.Name</span>
+                                                </a>
+                                            }
+                                        }
+                                        
+                                    </li>
+
+                                </ul>
+                            </li>
+                       }
+                    }
+
+                </ul>
+            </li>
+                   
+            <!-- Setup -->
+            <li class='menusection'>Setup</li>
+            <li class="">
+                <a href="~/DMS/Folders/">
+                    <i class="fa fa-folder"></i>
+                    <span class="title">Folders</span>
+                </a>
+            </li>
+            <li class="">
+                <a href="~/DMS/Categories/">
+                    <i class="fa fa-tags"></i>
+                    <span class="title">Categories</span>
+                </a>
+            </li>
+            <li class="">
+                <a href="~/DMS/Attributes/">
+                    <i class="fa fa-tag"></i>
+                    <span class="title">Attributes</span>
+                </a>
+            </li>
+            <li class="">
+                <a href="~/DMS/Lists/">
+                    <i class="fa fa-list"></i>
+                    <span class="title">Lists</span>
+                </a>
+            </li>
+
+            <!-- Permissions -->
+            <li class="">
+                <a href="javascript:;"> <i class="fa fa-lock"></i> <span class="title">Permissions</span> <span class="arrow"></span> </a>
+                <ul class="sub-menu" style="display: none;">
+
+                    <li class="">
+                        <a href="~/DMS/Roles">
+                            <span class="title">Roles</span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="~/DMS/FolderRoles">
+                            <span class="title">Folder Roles</span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="~/DMS/CategoryRoles">
+                            <span class="title">Category Roles</span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="~/DMS/UserRoles">
+                            <span class="title">User Roles</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </li>
+        </ul>
+
+    </div>
+    <!-- MAIN MENU - END -->
+
+</div>
+<!--  SIDEBAR - END -->

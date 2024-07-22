@@ -1,0 +1,79 @@
+﻿<!-- SIDEBAR - START -->
+<div class="page-sidebar fixedscroll">
+
+    <!-- MAIN MENU - START -->
+    <div class="page-sidebar-wrapper" id="main-menu-wrapper">
+
+
+        <ul class='wraplist'>
+            @if (iSynergy.Properties.Settings.Default.Modules.Contains("procurement"))
+            {
+                <li class="">
+                    <a href="~/Procurement">
+                        <i class="fa fa-shopping-cart"></i>
+                        <span class="title">Procurement</span>
+                    </a>
+                </li>
+            }
+            @if (iSynergy.Properties.Settings.Default.Modules.Contains("finance"))
+            {
+
+                <li class="">
+                    <a href="~/Finance">
+                        <i class="fa fa-money"></i>
+                        <span class="title">Finance</span>
+                    </a>
+                </li>
+            }
+            @if (iSynergy.Properties.Settings.Default.Modules.Contains("hr"))
+            {
+
+                <li class="">
+                    <a href="~/HR">
+                        <i class="fa fa-group"></i>
+                        <span class="title">Human Resources</span>
+                    </a>
+                </li>
+            }
+            @if (iSynergy.Properties.Settings.Default.Modules.Contains("inventory"))
+            {
+
+                <li class="">
+                    <a href="~/Inventory">
+                        <i class="fa fa-desktop"></i>
+                        <span class="title">Inventory</span>
+                    </a>
+                </li>
+            }
+            @if (iSynergy.Properties.Settings.Default.Modules.Contains("dms"))
+            {
+
+                <li class="">
+                    <a href="~/DMS">
+                        <i class="fa fa-archive"></i>
+                        <span class="title">DMS</span>
+                    </a>
+                </li>
+            }
+            <li class="">
+                <a href="~/AppSettings">
+                    <i class="fa fa-cogs"></i>
+                    <span class="title">Settings</span>
+                </a>
+            </li>
+            @if (User.IsInRole("Admin"))
+            {
+                <li class="">
+                    <a href="~/SuperUser">
+                        <i class="fa fa-wrench"></i>
+                        <span class="title">Super User</span>
+                    </a>
+                </li>
+            }
+        </ul>
+
+    </div>
+    <!-- MAIN MENU - END -->
+
+</div>
+<!--  SIDEBAR - END -->

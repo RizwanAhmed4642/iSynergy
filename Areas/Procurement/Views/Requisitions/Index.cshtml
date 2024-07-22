@@ -1,0 +1,141 @@
+﻿@model IEnumerable<iSynergy.Areas.Procurement.Models.Requisition>
+
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+                <a href="@Url.Action("Create")"><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-plus"></i> &nbsp; Add New Requisition</Span></a>
+
+                <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+                <table id="grid" class="display" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.RequisitionId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.creationDate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CurrentState)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.RequisitionId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.creationDate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CurrentState)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RequisitionId)
+                            </td>
+                            <td data-order="@item.creationDate.ToString("yyyyMMddHHss")">
+                                @item.creationDate.ToString("dd.MMM.yyyy")
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                            <td>
+                                @switch ((int)item.CurrentState)
+                {
+                    case 0:
+                                        <span>Pending</span>
+                                        break;
+                                    case 1:
+                                        <span>Rejected</span>
+                                        break;
+                                    case 2:
+                                        <span>Manager Approved</span>
+                                        break;
+                                    case 3:
+                                        <span>Final Approved</span>
+                                        break;
+                                    case 4:
+                                        <span>Cash Issued</span>
+                                        break;
+                                    case 5:
+                                        <span>Partial Cash Issued</span>
+                                        break;
+                                    case 6:
+                                        <span>Partial Cash Received</span>
+                                        break;
+                                    case 7:
+                                        <span>Cash Received</span>
+                                        break;
+                                    case 8:
+                                        <span>Partial Delivered</span>
+                                        break;
+                                    case 9:
+                                        <span>Delivered</span>
+                                        break;
+                                    case 10:
+                                        <span>Closed</span>
+                                        break;
+                                    case 11:
+                                        <span>Pending for COO's Approval</span>
+                                        break;
+                                    case 12:
+                                        <span>Pending for Quotations</span>
+                                        break;
+                                    case 13:
+                                        <span>Quotations Acquired</span>
+                                        break;
+                                    case 14:
+                                        <span>Reapproval Required</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                @if (item.CurrentState == iSynergy.Areas.Procurement.Models.RequisitionStates.Rejected)
+                                {
+                                    @Html.ActionLink("Edit and Re-approve", "Edit", new { id = item.RequisitionId }) @:|
+
+                                }
+                                @Html.ActionLink("Power Edit", "PowerEdit", new { id = item.RequisitionId }) |
+                                @Html.ActionLink("Details", "Review", new { id = item.RequisitionId })
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts{
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#grid').DataTable({
+                "pageLength": 100
+            });
+        });
+    </script>
+}

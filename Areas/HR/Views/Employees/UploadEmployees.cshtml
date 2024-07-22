@@ -1,0 +1,81 @@
+﻿@model  System.Data.DataTable
+@{
+
+    ViewBag.Title = "Upload Employees";
+}
+
+@{
+    if (Model != null)
+    {
+        using (Html.BeginForm("ConfirmUploadEmployees", "Employees", FormMethod.Post, new { area = "HR" }))
+        {
+            @Html.AntiForgeryToken();
+            <section class="box" style="border-left: 3px solid #e77512;">
+                <header class="panel_header">
+                    <h2 class="title pull-left">@ViewBag.Title</h2>
+                </header>
+                <div class="content-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="table-responsive" data-pattern="priority-columns">
+                                <table class="table table-small-font no-mb table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            @for (int i = 0; i < Model.Columns.Count; i++)
+                                            {
+                                                <th>@Model.Columns[i].ColumnName</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.Rows.Count; i++)
+                                        {
+                                            <tr>
+                                                @for (int j = 0; j < Model.Columns.Count; j++)
+                                                {
+                                                    <td>
+                                                        @Model.Rows[i][j].ToString()
+                                                    </td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <input type="submit" value="Confirm Upload!" class="btn btn-success" />
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        }
+
+    }
+    else
+    {
+        using (Html.BeginForm("UploadEmployees", "Employees", FormMethod.Post, new { area = "HR", encType = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken();
+            <section class="box" style="border-left: 3px solid #e77512;">
+                <header class="panel_header">
+                    <h2 class="title pull-left">@ViewBag.Title</h2>
+                </header>
+                <div class="content-body">
+                    <div class="row">
+                        <div class="form-group col-xs-12">
+                            <input class="form-control" type="file" name="FileUpload" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                            <input type="submit" name="Submit" id="Submit" value="Upload" class="form-control btn btn-success" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        }
+    }
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

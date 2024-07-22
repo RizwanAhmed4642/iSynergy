@@ -1,0 +1,95 @@
+﻿@model iSynergy.Areas.HR.Models.Employee
+
+@{
+    ViewBag.Title = "Employee Details";
+}
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <div>
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Department.Name)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Department.Name)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Designation.Title)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Designation.Title)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Office.Location)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Office.Location)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.ManagerId)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.ManagerId)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Email)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Email)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.JoiningDate)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.JoiningDate)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.ReleaseDate)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.ReleaseDate)
+                        </dd>
+                        
+                    </dl>
+                </div>
+                <p>
+                    <a href="@Url.Action("Release",new { id = Model.EmployeeId })"><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-ban"></i> &nbsp; Release Employee</Span></a>
+                </p>
+                
+                <p>
+                    @Html.ActionLink("Edit", "Edit", new { id = Model.EmployeeId }) |
+                    @Html.ActionLink("Back to List", "Index")
+
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+

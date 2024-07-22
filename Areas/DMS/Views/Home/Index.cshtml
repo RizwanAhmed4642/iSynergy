@@ -1,0 +1,195 @@
+﻿@using iSynergy.Areas.DMS.Models
+@model System.Data.DataTable
+
+@{
+    var attributeIds = (Dictionary<int, int>)ViewBag.attributeIds;
+    var attributeTypes = (Dictionary<int, iSynergy.Areas.DMS.Models.DocumentAttributeDataType>)ViewBag.attributeTypes;
+    var documentIds = (Dictionary<int, int>)ViewBag.documentIds;
+    var isFollower = (bool)ViewBag.isFollower;
+    var category = (DocumentCategory)ViewBag.Category;
+    ViewBag.Title = category == null ? "" : category.Name;
+}
+
+@if (Model.Columns.Count > 0)
+{
+    <section class="box" style="border-left: 3px solid #e77512;">
+        <header class="panel_header">
+            <h2 class="title pull-left">Filter</h2>
+        </header>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { area = "DMS" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="CategoryId" id="CategoryId" value="@ViewBag.CategoryId" />
+                        <table id="filterTable" border="0">
+                            <tbody>
+
+                                <tr>
+                                    <td id="emptyCell">
+                                        &nbsp;
+                                    </td>
+                                    <td>
+                                        <select id="attribute" name="attribute[0]" class="form-control">
+                                            @for (int i = 0; i < Model.Columns.Count; i++)
+                                            {
+                                                var col = Model.Columns[i];
+                                                var attrId = attributeIds[col.Ordinal];
+                                                <option value="@attrId">@col</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div>
+
+                                            <select id="operator" name="operator[0]" class="form-control">
+                                                <option>=</option>
+                                                <option>></option>
+                                                <option><</option>
+                                            </select>
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input id="val" name="val[0]" type="text" class="form-control" />
+
+                                    </td>
+                                    <td>&nbsp;&nbsp;<a id='addFilter'><Span><i class='fa fa-plus'></i></Span></a>
+                                    <td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                        <br />
+                        <input type="submit" value="Search" class="btn btn-success" />
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="box" style="border-left: 3px solid #e77512;">
+        <header class="panel_header">
+            <h2 class="title pull-left">@ViewBag.Title</h2>
+        </header>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="@Url.Action("Add", "Documents",new { id = ViewBag.CategoryId })"><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-plus"></i> &nbsp; Add Document</Span></a>
+                </div>
+
+                <div class="col-md-6">
+                    @if (isFollower)
+                    {
+                        <a href="@Url.Action("Unfollow", "Categories",new { id = ViewBag.CategoryId })"><Span class="btn btn-info btn-icon background bottom15 pull-right"><i class="fa fa-thumbs-down"></i> &nbsp; Unfollow</Span></a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Follow", "Categories",new { id = ViewBag.CategoryId })"><Span class="btn btn-info btn-icon background bottom15 pull-right"><i class="fa fa-thumbs-up"></i> &nbsp; Follow</Span></a>
+                    }
+
+                </div>
+                @*<div class="col-md-6">
+                        <input id="myInput" type="text" placeholder="Search.." class="form-control pull-right">
+                        <br />
+                    </div>*@
+                <div class="col-xs-12">
+
+                    <div class="table-responsive" data-pattern="priority-columns">
+                        <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+                        <table id="grid" class="table table-striped table-bordered" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    @for (int i = 0; i < Model.Columns.Count; i++)
+                                    {
+                                        <th>
+                                            @Model.Columns[i]
+                                        </th>
+                                    }
+                                </tr>
+
+                            </thead>
+                            @{ string format = "#,##0.00;(#,##0.00)";}
+                            <tbody id="myTable">
+                                @for (int i = 0; i < Model.Rows.Count; i++)
+                                {
+                                    <tr onclick="window.location.href = '@Url.Action("Details","Documents",new { id = documentIds[i]})';">
+                                        @for (int j = 0; j < Model.Columns.Count; j++)
+                                        {
+                                            if (attributeTypes[j] == iSynergy.Areas.DMS.Models.DocumentAttributeDataType.Currency)
+                                            {
+                                                <td align="right">
+                                                    @Decimal.Parse(Model.Rows[i][j].ToString()).ToString(format)
+                                                </td>
+                                            }
+                                            else if (attributeTypes[j] == iSynergy.Areas.DMS.Models.DocumentAttributeDataType.Number)
+                                            {
+                                                <td align="center">
+                                                    @Model.Rows[i][j].ToString()
+                                                </td>
+                                            }
+                                            else if (attributeTypes[j] == iSynergy.Areas.DMS.Models.DocumentAttributeDataType.Date)
+                                            {
+                                                <td align="center">
+                                                    @if (!String.IsNullOrEmpty(Model.Rows[i][j].ToString()))
+                                                    {
+                                                        <text>@DateTime.Parse(Model.Rows[i][j].ToString()).ToString("dd-MMM-yyyy")</text>
+                                                    }
+                                                </td>
+                                            }
+                                            else if (attributeTypes[j] == iSynergy.Areas.DMS.Models.DocumentAttributeDataType.Time)
+                                            {
+                                                <td>
+                                                    @DateTime.Parse(Model.Rows[i][j].ToString()).ToString("HH:mm:ss")
+                                                </td>
+                                            }
+                                            else if (attributeTypes[j] == iSynergy.Areas.DMS.Models.DocumentAttributeDataType.Boolean)
+                                            {
+                                                <td>
+                                                    @if (Boolean.Parse(Model.Rows[i][j].ToString()))
+                                                    {
+                                                        <input type="checkbox" checked="checked" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" />
+                                                    }
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>
+                                                    @Model.Rows[i][j].ToString()
+                                                </td>
+                                            }
+
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+
+
+@section Scripts {
+    @*@Scripts.Render("~/Scripts/App/SearchTable.js")*@
+    @Scripts.Render("~/Scripts/App/AddFilter.js")
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#grid').DataTable({
+                "pageLength": 100
+            });
+        });
+    </script>
+}

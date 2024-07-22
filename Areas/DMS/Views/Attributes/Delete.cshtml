@@ -1,0 +1,60 @@
+﻿@model iSynergy.Areas.DMS.Models.DocumentAttribute
+
+@{
+    ViewBag.Title = "Delete Attribute";
+}
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+                <h3>Are you sure you want to delete this?</h3>
+                <div>
+
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.DocumentAttributeType.DocumentAttributeTypeId)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.DocumentAttributeType.DocumentAttributeTypeId)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.DocumentCategory.Name)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.DocumentCategory.Name)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
+
+                    </dl>
+
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-actions no-color">
+                            <input type="submit" value="Delete" class="btn btn-default" /> |
+                            @Html.ActionLink("Back to List", "Index")
+                        </div>
+                    }
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</section>
+

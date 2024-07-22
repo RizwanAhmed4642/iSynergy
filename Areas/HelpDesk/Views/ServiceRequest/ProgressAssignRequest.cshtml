@@ -1,0 +1,215 @@
+﻿@model iSynergy.Areas.HelpDesk.ViewModel.ServiceRequestViewModel
+@{
+    ViewBag.Title = "ProgressAssignRequest";
+    Layout = "~/Areas/HelpDesk/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    textarea, .form-control {
+        border: 1px solid #e1e1e1;
+        width: 100% !important;
+        height: 152%;
+    }
+</style>
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-danger" id="msgalert">
+        @TempData["Msg"].ToString()
+    </div>
+}
+
+<div class="col-md-offset-3">
+    <section class="col-md-9">
+        <header class="panel_header">
+            <h2 class="title pull-left">Done Request</h2>
+        </header>
+        <div class="content-body col-md-12">
+
+
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id,new {@Id="ReqId"})
+               @Html.HiddenFor(model=>model.Subject)
+                @Html.HiddenFor(model => model.DepartmentId)
+                @Html.HiddenFor(model => model.Department)
+                @Html.HiddenFor(model => model.Description)
+                @Html.HiddenFor(model => model.Priorty)
+                @Html.HiddenFor(model => model.HODId)
+                @Html.HiddenFor(model => model.ServicesCategory)
+                @Html.HiddenFor(model => model.ServicesCategoryId)
+            <div class="form-horizontal">
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Subject, "Subject", htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control col-md-10", disabled = "disabled" } })
+                                @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DepartmentId, "Department", htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.Department, new { htmlAttributes = new { @class = "form-control col-md-10", disabled = "disabled" } })
+                                @Html.ValidationMessageFor(model => model.Department, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ServicesCategoryId, "Category", htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.ServicesCategory, new { htmlAttributes = new { @class = "form-control col-md-10", disabled = "disabled" } })
+                                @Html.ValidationMessageFor(model => model.ServicesCategory, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Priorty, "Priorty", htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.Priorty, new { htmlAttributes = new { @class = "form-control col-md-10", disabled = "disabled" } })
+                                @Html.ValidationMessageFor(model => model.Priorty, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Description, "Description", htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.TextAreaFor(model => model.Description, new { htmlAttributes = new { @class = "form-control col-md-12", disabled = "true" } })
+                                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.HodComments, "Hod Comments", htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.TextAreaFor(model => model.HodComments, new { htmlAttributes = new { @class = "form-control col-md-12", disabled = "true" } })
+                                @Html.ValidationMessageFor(model => model.HodComments, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DueDate, htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.DueDate, new { htmlAttributes = new { @class = "form-control col-md-10", disabled = "disabled" } })
+                                @Html.ValidationMessageFor(model => model.DueDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.EmolyeeComments, "Your Comment", htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-8">
+                                @Html.TextAreaFor(model => model.EmolyeeComments, new { htmlAttributes = new { @class = "form-control col-md-10", } })
+                                @Html.ValidationMessageFor(model => model.EmolyeeComments, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        @Html.ActionLink("Back to List", "MyTask", "ServiceRequest", new { area = "HelpDesk" })
+
+
+                    </div>
+                    <div class="col-md-offset-4 col-md-1">
+                        <span id="AssignbacktoHod"  class="btn btn-info" >Roll Back</span>
+
+
+                    </div>
+                    <div class="col-md-offset-2  col-md-2">
+                 
+
+
+                            <input type="submit" value="Done" class="btn btn-success" />
+                   
+                    </div>
+                </div>
+            </div>
+            }
+
+
+
+        </div>
+
+    </section>
+
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+    $(document).ready(function () {
+        $("#AssignbacktoHod").click(function (e) {
+
+            var EmployeeComments = $("#EmolyeeComments").val();
+
+            var ReqIds = $("#ReqId").val();
+    
+            if (EmployeeComments == "") 
+          {
+                alert("Your Comments cannot be empty");
+            return false
+            }
+            else
+
+            {
+         
+                $.ajax({
+                    type: "POST",
+                    url: "/iSynergy/HelpDesk/ServiceRequest/RequestBackToHod",
+                    data: {
+                        EmployeeComment: EmployeeComments,
+                        ReqId: ReqIds
+                    },
+                    //async: false,
+                    dataType: 'json',
+                    //cache: true,
+                    success: function (data) {
+                        debugger
+                        window.location.href = data.Url;
+                    },
+                    error: function (xhr, status, error) {
+                        debugger
+                        var errorMessage = xhr.status + ': ' + xhr.statusText
+                    },
+                });
+            }
+            return false;
+        });
+    });
+    </script>
+
+
+
+
+}
+

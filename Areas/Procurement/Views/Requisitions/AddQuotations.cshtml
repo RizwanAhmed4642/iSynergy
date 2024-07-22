@@ -1,0 +1,132 @@
+﻿@model  iSynergy.Areas.Procurement.Models.RequisitionReviewViewModel
+
+@{
+    ViewBag.Title = "Add Quotations";
+}
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+
+                @using (Html.BeginForm("AddQuotations", "Requisitions", FormMethod.Post, new { area = "Procurement", encType = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken();
+                    <div class="form-horizontal">
+                        <input type="hidden" name="newEvent.RequisitionId" value="@Model.requisition.RequisitionId" />
+                        <hr />
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div id="RequisitionPanel" class="form-group col-md-12">
+                            <div class="control-label col-md-2"><strong>Requisition</strong></div>
+                            <div class="col-md-10"><p class="form-control-static">@Model.requisition.Description</p></div>
+                        </div>
+                        <div id="RequisitionItemsPanel" class="form-group">
+                            @Html.LabelFor(model => model.requisitionItems, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <table class="table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <td class="control-label col-md-5">Item</td>
+                                            <td class="control-label col-md-1">Quantity</td>
+                                            <td class="control-label col-md-2">Unit Price (Expected)</td>
+                                            <td class="control-label col-md-1">Total</td>
+                                            <td class="control-label col-md-1">Attachment</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.requisitionItems)
+                                        {
+                                            <tr>
+                                                <td class="control-label col-md-5">@item.ItemName</td>
+                                                <td class="control-label col-md-1">@item.Quantity</td>
+                                                <td class="control-label col-md-2">@String.Format("{0:n}", item.UnitPrice)</td>
+                                                <td class="control-label col-md-1">@String.Format("{0:n}", item.UnitPrice * item.Quantity)</td>
+                                                <td class="control-label col-md-1">
+                                                    @if (item.File != null)
+                                                    {
+                                                        <a href="@Url.Action("Index", "DownloadAttachment", new {area = "", id = item.File })">
+                                                            <span class=" fa fa-paperclip icon-md"></span>
+                                                        </a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="control-label col-md-8">Grand Total:</td>
+                                            <td class="control-label col-md-1">@String.Format("{0:n}", Model.requisitionItems.Sum(i => (i.UnitPrice * i.Quantity)))</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        @if (!Model.readOnlyAccess)
+                        {
+
+                            @* add table for quotations. *@
+                            <div class="form-group">
+                                <div class="control-label col-md-2"><strong>Add Quotations</strong></div>
+                                <div class="col-md-10">
+                                    <table id="myTable" class="table quotation-list">
+                                        <thead>
+                                            <tr>
+                                                <td>Supplier</td>
+                                                <td>Price</td>
+                                                <td>Attachment</td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @* dynamically create quotations table here *@
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="5" class="col-md-12">
+                                                    <input type="button" class="btn btn-lg btn-block" id="btnAddQuotation" value="Add new quotation" />
+                                                </td>
+                                            </tr>
+                                            <tr></tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    if (!Model.readOnlyAccess)
+                    {
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                @*<input id="btnSubmitRequisition" type="submit" value="Submit" class="btn btn-lg btn-block btn-success" disabled />*@
+                                <input id="btnSubmitRequisition" type="submit" value="Submit" class="btn btn-lg btn-block btn-success" disabled />
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/App/DynamicRequisitionQuotationsRendrer.js")
+    @Scripts.Render("~/Scripts/App/EnableAddQuotationsButton.js")
+    <script type="text/javascript">
+            var urlQuotationsUpload;
+            $(document).ready(function () {
+                init();
+            });
+
+            function init() {
+                urlQuotationsUpload = '@Url.Action("UploadQuotations", "Requisitions")';
+            }
+    </script>
+}

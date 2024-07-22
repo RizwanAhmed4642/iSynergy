@@ -1,0 +1,196 @@
+﻿@model iSynergy.Areas.Procurement.Models.RequisitionViewModel
+
+@{
+    ViewBag.Title = "Edit Requisition (Admin mode only)";
+}
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+                @using (Html.BeginForm("PowerEdit", "Requisitions", FormMethod.Post, new { encType = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(x => x.RequisitionId);
+                    <div class="form-horizontal">
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.requisitionDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.requisitionDescription, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.requisitionDescription, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        @* add table for requsition items. *@
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.requisitionItems, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <table id="myTable" class="table  item-list">
+                                    <thead>
+                                        <tr>
+                                            <td>Item</td>
+                                            <td>Quantity</td>
+                                            <td>Price</td>
+                                            <td>Attachment</td>
+                                            <td></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{ var index = 0;}
+                                        @for (int i = 0; i < Model.requisitionItems.Count; i++)
+                                        {
+                                            <tr>
+                                                <td class="col-md-4">
+                                                    @Html.HiddenFor(x => x.requisitionItems[i].RequisitionItemId)
+                                                    @Html.EditorFor(x => x.requisitionItems[i].ItemName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(x => x.requisitionItems[i].ItemName, null, new { @class = "text-danger" })
+                                                </td>
+                                                <td class="col-md-1">
+                                                    @Html.EditorFor(x => x.requisitionItems[i].Quantity, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(x => x.requisitionItems[i].Quantity, null, new { @class = "text-danger" })
+                                                </td>
+                                                <td class="col-md-1">
+                                                    @Html.EditorFor(x => x.requisitionItems[i].UnitPrice, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(x => x.requisitionItems[i].UnitPrice, null, new { @class = "text-danger" })
+                                                </td>
+                                                <td align="center" class="col-md-1">
+                                                    @if (Model.requisitionItems[i].File != null)
+                                                    {
+                                                        <a href="@Url.Action("Index", "DownloadAttachment", new {area = "", id = Model.requisitionItems[i].File })">
+                                                            <span class=" fa fa-paperclip fa-lg"></span>
+                                                        </a>
+                                                    }
+                                                </td>
+                                                <td class="col-md-2">
+                                                    <input type="hidden" name="ItemFiles.Index" value="@i" />
+                                                    <input type="file" id=@("ItemFile" + i) name="ItemFiles[@i]" class="input-file" accept=".bmp,.jpg,.png,.doc,.docx,.pdf">
+                                                </td>
+                                                <td class="col-md-1"></td>
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+
+                        @* add table for quotations. *@
+                        @if (Model.requisitionQuotations.Count > 0)
+                        {
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.requisitionQuotations, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    <table id="myTable" class="table quotation-list">
+                                        <thead>
+                                            <tr>
+                                                <td>Supplier</td>
+                                                <td>Price</td>
+                                                <td>Attachment</td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.requisitionQuotations.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td class="col-md-4">
+                                                        @Html.HiddenFor(x => x.requisitionQuotations[i].RequisitionQuotationId)
+                                                        @Html.EditorFor(x => x.requisitionQuotations[i].SupplierName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(x => x.requisitionQuotations[i].SupplierName, null, new { @class = "text-danger" })
+                                                    </td>
+                                                    <td class="col-md-2">
+                                                        @Html.EditorFor(x => x.requisitionQuotations[i].QuotationPrice, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(x => x.requisitionQuotations[i].QuotationPrice, null, new { @class = "text-danger" })
+                                                    </td>
+
+                                                    <td align="center" class="col-md-1">
+                                                        @if (Model.requisitionQuotations[i].File != null)
+                                                        {
+                                                            <a href="@Url.Action("Index", "DownloadAttachment", new {area = "", id = Model.requisitionQuotations[i].File })">
+                                                                <span class=" fa fa-paperclip fa-lg"></span>
+                                                            </a>
+                                                        }
+                                                    </td>
+                                                    <td class="col-md-2">
+                                                        <input type="hidden" name="QuotationFiles.Index" value="@i" />
+                                                        <input type="file" id=@("QuotationFile" + i) name="QuotationFiles[@i]" class="input-file" accept=".bmp,.jpg,.png,.doc,.docx,.pdf">
+                                                    </td>
+                                                    @*<td>
+                                                <input type="button" class="ibtnDel btn btn-sm btn-danger " value="Delete">4
+                                            </td>*@
+                                                    <td class="col-md-1"></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        @*<tfoot>
+                                    <tr>
+                                        <td colspan="5" class="col-md-12">
+                                            <input type="button" class="btn btn-lg btn-block" id="btnAddQuotation" value="Add new quotation" />
+                                        </td>
+                                    </tr>
+                                    <tr></tr>
+                                </tfoot>*@
+                                    </table>
+
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                    if (Model.requisitionBill != null)
+                    {
+                        <div class="form-group">
+                            @Html.HiddenFor(model => model.requisitionBill.RequisitionBillId)
+                            @Html.LabelFor(model => model.requisitionBill, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <table class="table">
+                                    <tr>
+                                        <td>
+                                            <a href="@Url.Action("Index", "DownloadAttachment", new {area = "", id = Model.requisitionBill.File })">
+                                                <span class=" fa fa-paperclip fa-lg"></span>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <input type="file" id="requisitionBillFile" name="requisitionBillFile" class="input-file" accept=".bmp,.jpg,.png,.doc,.docx,.pdf">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    }
+
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input id="btnSubmitRequisition" type="submit" value="Submit for approval" class="btn btn-lg btn-success" />
+                        </div>
+                    </div>
+                                            }
+
+                
+
+            </div>
+        </div>
+    </div>
+</section>
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+<br>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/App/DynamicRequisitionItemsRendrer.js")
+    @Scripts.Render("~/Scripts/App/DynamicRequisitionQuotationsRendrer.js")
+}
+
+
+
+

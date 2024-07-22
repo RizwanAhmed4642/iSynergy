@@ -1,0 +1,104 @@
+﻿@model IEnumerable<iSynergy.Areas.Finance.Models.JournalEntryViewModel>
+
+@{
+    ViewBag.Title = "Journal Entries";
+}
+<a href="@Url.Action("Create")"><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-plus"></i> &nbsp; Create New Journal Entry</Span></a>
+@if (Model.Count() > 0)
+{
+    <p>Journal entries till @DateTime.Today.AddMonths(-3).ToString("dd-MMM-yyyy") (i.e. last 3 months)</p>
+}
+else
+{
+    <p>No journal entries found!</p>
+}
+@foreach (var journal in Model)
+{
+    <section class="box" style="border-left: 3px solid #e77512;">
+        <header class="panel_header">
+            <h2 class="title pull-left">@journal.Reference</h2>
+            <div class="actions panel_actions pull-right">
+                <a class="box_toggle fa fa-chevron-down"></a>
+                <a class="box_close fa fa-times"></a>
+            </div>
+        </header>
+        <p style="padding-left:20pt">@journal.Date.ToString("dd-MMM-yyyy")</p>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <table class="table table-small-font no-mb table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">Code</th>
+                                <th class="col-md-4">Account</th>
+                                <th class="col-md-1">Debit</th>
+                                <th class="col-md-1">Credit</th>
+                                <th class="col-md-3">Memo</th>
+                                <th class="col-md-1"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ string format = "#,##0.00;(#,##0.00)";}
+                            @foreach (var posting in journal.Postings)
+                            {
+                                <tr>
+                                    <td>@posting.Account.AccountId</td>
+                                    <td>@Html.ActionLink(posting.Account.Title, "Detail", "Ledgers", new { id = posting.Account.AccountId }, null)</td>
+                                    @if (posting.Debit != 0)
+                                    {
+                                        <td align="right">@(((double)posting.Debit).ToString(format))</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    
+                                    @if (posting.Credit != 0)
+                                    {
+                                        <td align="right">@(((double)posting.Credit).ToString(format))</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    <td align="right">@posting.Memo</td>
+                                    <td>
+                                        @if (!String.IsNullOrEmpty(posting.Attachment))
+                                        {
+                                            <a href="@Url.Action("Index", "DownloadAttachment", new {area = "", id = posting.Attachment })">
+                                                <span class=" fa fa-paperclip icon-md"></span>
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight:bold">
+                                <td colspan="2"  align="right"> Total</td>
+                                <td  align="right">@String.Format("{0:n}", journal.Postings.Sum(x => x.Debit))</td>
+                                <td  align="right">@String.Format("{0:n}", journal.Postings.Sum(x => x.Credit))</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="pull-right">
+                    <a href=" @Url.Action("Create", "JournalEntries", new { id = journal.JournalId })"><Span class="btn btn-link background bottom15"><i class="fa fa-copy"></i> &nbsp; Copy</Span></a>
+                    <a href=" @Url.Action("CreateReverseEntry", "JournalEntries", new { id = journal.JournalId })"><Span class="btn btn-link background bottom15"><i class="fa fa-exchange"></i> &nbsp; Reverse</Span></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+}
+
+
+
+
+
+
+
+
+

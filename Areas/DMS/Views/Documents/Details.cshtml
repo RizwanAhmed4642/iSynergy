@@ -1,0 +1,110 @@
+﻿@model IEnumerable<iSynergy.Areas.DMS.Models.DocumentVersion>
+
+@{
+    var document = Model.FirstOrDefault().Document;
+    ViewBag.Title = string.Format("{0} : Ref. # {1}", document.DocumentCategory.Name, document.DocumentId);
+    var employeeDictionary = (Dictionary<int, string>)ViewBag.employeeDictionary;
+}
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <div>
+
+                    <dl class="dl-horizontal">
+                        @if (document.isCheckedOut)
+	                    {
+                            <dt>
+                               Checked-Out by
+                            </dt>
+
+                            <dd>
+                                @employeeDictionary[document.checkedOutBy]
+                            </dd>
+	                    }
+                        @if (document.isLocked)
+                        {
+                            <dt>
+                                Locked by
+                            </dt>
+
+                            <dd>
+                                @employeeDictionary[document.lockedBy]
+                            </dd>
+                        }
+                    </dl>
+                </div>
+                <div class="pull-right">
+                    @if (document.isCheckedOut)
+                    {
+                        <a href="@Url.Action("CheckIn", new { id = document.DocumentId})" onclick="clickAndDisable(this);"><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-cloud-upload"></i> &nbsp; Check In</Span></a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("CheckOut", new { id = document.DocumentId})" ><Span class="btn btn-danger btn-icon background bottom15"><i class="fa fa-cloud-download"></i> &nbsp; Check Out</Span></a>
+                    }
+                    @if (document.isLocked)
+                    {
+                        <a href="@Url.Action("Unlock", new { id = document.DocumentId})" ><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-unlock"></i> &nbsp; Unlock</Span></a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Lock", new { id = document.DocumentId})" ><Span class="btn btn-danger btn-icon background bottom15"><i class="fa fa-lock"></i> &nbsp; Lock</Span></a>
+                    }
+                </div>
+                
+                <table class="table">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.VersionNumber)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.DateCreated)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.EmployeeId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Notes)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.URL)
+                        </th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.VersionNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DateCreated)
+                            </td>
+                            <td>
+                                @employeeDictionary[item.EmployeeId]
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Notes)
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Index", "DownloadAttachment", new { area = "", id = item.URL })">
+                                    @*<img src="~/images/paperclip.gif" style="height:25px; width: 25px; overflow: hidden;"/>*@
+                                    <span class="fa fa-download fa-lg"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+

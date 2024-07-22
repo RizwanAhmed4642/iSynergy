@@ -1,0 +1,58 @@
+﻿@model iSynergy.Areas.Finance.Models.JournalEntryViewModel
+
+@{
+    ViewBag.Title = "Pay Requisition";
+}
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">
+            Pay for <a href="@Url.Action("Review","Requisitions", new {area = "Procurement" , id = ViewBag.RequisitionId})" target="_blank">
+                Requistion # @ViewBag.RequisitionId
+            </a>
+        </h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+                @using (Html.BeginForm("PayRequisition", "JournalEntries", FormMethod.Post, new { id = "jeForm", encType = "multipart/form-data" }))
+                {
+                    <div class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" id="requisitionId" name="requisitionId" value="@ViewBag.RequisitionId" />
+
+                        @Html.Partial("_PostingsDynamicControlsPartial")
+
+                        <div class="form-group">
+                            <span class="col-md-2"></span>
+                            <div class="col-md-10">
+                                <select name="userAction" data-val="true" data-val-required="Please select a payment type." class="form-control input-validation-error">
+                                    <option selected="selected" value="">-- select payment type --</option>
+                                    <option value="Pay for Procurement">Pay for Procurement</option>
+                                    <option value="Pay as Liability">Pay as Liability</option>
+                                    <option value="Request Reapproval">Request Reapproval</option>
+                                </select>
+                                <span class="field-validation-valid text-danger" data-valmsg-for="userAction" data-valmsg-replace="true"></span>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-10"><input type="submit" value="Submit" class="btn btn-success"></div>
+                        </div>
+                    </div>
+                    
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    @Scripts.Render("~/Scripts/App/AccountIdAutoComplete.js")
+@Scripts.Render("~/Scripts/App/DebitCreditTotalCalculator.js")
+    @Scripts.Render("~/Scripts/App/DynamicPostingItemsRendrer.js")
+    @Scripts.Render("~/Content/cryptonia_theme/assets/plugins/jquery-ui/smoothness/jquery-ui.min.js")
+    <link href="~/Content/cryptonia_theme/assets/plugins/jquery-ui/smoothness/jquery-ui.min.css" rel="stylesheet" />
+}

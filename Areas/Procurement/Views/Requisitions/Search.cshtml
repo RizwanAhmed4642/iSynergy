@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewBag.Title = "Search Requisitions";
+}
+<section class="box has-border-left-3" >
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-horizontal">
+                        <div class="col-md-2">
+                            <label class="control-label">Requisition Id:</label>
+                        </div>
+                        <div class="col-md-10">
+                            <input type="number" name="requisitionId" class="form-control" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="control-label">From:</label>
+                        </div>
+                        <div class="col-md-10">
+                            <input type="date" name="fromDate" class="form-control" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="control-label">To:</label>
+                        </div>
+                        <div class="col-md-10">
+                            <input type="date" name="toDate" class="form-control" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="control-label">Description:</label>
+                        </div>
+                        <div class="col-md-10">
+                            <input type="text" name="description" class="form-control"  placeholder="Requisition Title or Description" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="control-label">Requested By:</label>
+                        </div>
+                        <div class="col-md-10">
+                            <input type="text" name="requestedBy" class="form-control" placeholder="Initiator's Name" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="control-label">Pending With:</label>
+                        </div>
+                        <div class="col-md-10">
+                            <input type="text" name="pendingWith" class="form-control" placeholder="Approver's Name" />
+                        </div>
+
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-10">
+                            <input type="submit" value="Search" class="btn btn-sm btn-success btn-block" />
+                        </div>
+                    </div>
+
+                }
+
+            </div>
+        </div>
+    </div>
+</section>
+
+

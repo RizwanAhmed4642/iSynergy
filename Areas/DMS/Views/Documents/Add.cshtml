@@ -1,0 +1,102 @@
+﻿@model System.Data.DataTable
+
+@{ 
+    var lookupData = (Dictionary<int, List<string>>)ViewBag.lookupData;
+    var attributeTypes = (Dictionary<int, iSynergy.Areas.DMS.Models.DocumentAttributeDataType>)ViewBag.attributeTypes;
+    var attributeIds = (Dictionary<int, int>)ViewBag.attributeIds;
+}
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            @using (Html.BeginForm("Add", "Documents", FormMethod.Post, new { area = "DMS", encType = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="CategoryId" name="CategoryId" value="@ViewBag.CategoryId"/>
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    @for (int i = 0; i < Model.Columns.Count; i++)
+                    {
+                        <div class="form-group">
+                            <label for="@Model.Rows[0][i]" class="control-label col-md-2">@Model.Columns[i]</label>
+                            <div class="col-md-10">
+                                @if (lookupData != null && lookupData.ContainsKey(i))
+                                {
+                                    @Html.DropDownListFor(model => model.Rows[0][i], new SelectList(lookupData[i]), "-- select --", new { @class = "form-control" })
+                                }
+                                else
+                                {
+                                    if (attributeTypes[i] == iSynergy.Areas.DMS.Models.DocumentAttributeDataType.Date)
+                                    {
+                                        @Html.TextBoxFor(x => x.Rows[0][i], new { @class = "form-control", type = "date" });
+                                    }
+                                    else if (attributeTypes[i] == iSynergy.Areas.DMS.Models.DocumentAttributeDataType.Time)
+                                    {
+                                        @Html.TextBoxFor(x => x.Rows[0][i], new { @class = "form-control", type = "time" });
+                                    }
+                                    else if (attributeTypes[i] == iSynergy.Areas.DMS.Models.DocumentAttributeDataType.Currency)
+                                    {
+                                        @Html.TextBoxFor(x => x.Rows[0][i], new { @class = "form-control", type = "number", min = "0", value = "0", step = ".01" });
+                                    }
+                                    else if (attributeTypes[i] == iSynergy.Areas.DMS.Models.DocumentAttributeDataType.Number)
+                                    {
+                                        @Html.TextBoxFor(x => x.Rows[0][i], new { @class = "form-control", type = "number", min = "0", value = "0", step = "1" });
+                                    }
+                                    else if (attributeTypes[i] == iSynergy.Areas.DMS.Models.DocumentAttributeDataType.Boolean)
+                                    {
+                                        var boolList = new List<string> { "true", "false" };
+                                        @Html.DropDownListFor(model => model.Rows[0][i], new SelectList(boolList), "-- select --", new { @class = "form-control" })
+                                        @*<input type="checkbox" id="@Model.Rows[0][i]" name="@Model.Rows[0][i]"  value="false">*@
+                                        @*<script>
+                    $("#@attributeIds[i]").on('change', function () {
+                      if ($(this).is(':checked')) {
+                        $(this).attr('value', 'true');
+                      } else {
+                        $(this).attr('value', 'false');
+                      }
+                    });
+                </script>*@
+                                    }
+                                    else if (attributeTypes[i] == iSynergy.Areas.DMS.Models.DocumentAttributeDataType.TextArea)
+                                    {
+                                        @Html.TextAreaFor(x => x.Rows[0][i], new { @class = "form-control" });
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(x => x.Rows[0][i], new { @class = "form-control" });
+                                    }
+
+                                }
+
+                                @Html.ValidationMessageFor(model => model.Rows[0][i], "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    }
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Notes</label>
+                        <div class="col-md-10">
+                            <textarea id="notes" name="notes" class="form-control" placeholder="Add some comments to understand the purpose of this update."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Attachment</label>
+                        <div class="col-md-10">
+                            <input required type="file" id="attachments" name="attachments" class="form-control" multiple />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Add Document" class="btn btn-success" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

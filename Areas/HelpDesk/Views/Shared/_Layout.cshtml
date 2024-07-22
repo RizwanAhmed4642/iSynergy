@@ -1,0 +1,110 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Scripts{
+    @RenderSection("Scripts", false)
+}
+<div class="page-container row-fluid container-fluid">
+
+    <!-- SIDEBAR - START -->
+
+    <div class="page-sidebar fixedscroll">
+
+        <!-- MAIN MENU - START -->
+        <div class="page-sidebar-wrapper" id="main-menu-wrapper">
+
+
+            <ul class='wraplist'>
+                <li class="">
+                    <a href="~/HelpDesk/ServiceRequest/Create">
+                        <i class="fa fa-plus"></i>
+                        <span class="title">Create New Request</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="~/HelpDesk/ServiceRequest/MyRequest">
+                        <i class="fa fa-list-alt"></i>
+                        <span class="title">My Request</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="~/HelpDesk/ServiceRequest/PendingRequestForMe">
+                        <i class="fa fa-list-alt"></i>
+                        <span class="title">Pending Request</span>
+                    </a>
+                </li> 
+                <li class="">
+                    <a href="~/HelpDesk/ServiceRequest/AssignedRequestToEmployees">
+                        <i class="fa fa-list-alt"></i>
+                        <span class="title">Assigned Request </span>
+                    </a>
+                </li> 
+                <li class="">
+                    <a href="~/HelpDesk/ServiceRequest/RollBackRequestForMe">
+                        <i class="fa fa-list-alt"></i>
+                        <span class="title">Rollback Requests</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="~/HelpDesk/ServiceRequest/AllRequestForMe">
+                        <i class="fa fa-list-alt"></i>
+                        <span class="title">All Request For Me</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="~/HelpDesk/ServiceRequest/MyTask">
+                        <i class="fa fa-list-alt"></i>
+                        <span class="title">My Tasks</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="~/HelpDesk/ServiceRequest/CompletedMyTask">
+                        <i class="fa fa-list-alt"></i>
+                        <span class="title">Completed Task</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="~/HelpDesk/ServiceCategory/Create">
+                        <i class="fa fa-plus"></i>
+                        <span class="title"> Create Service Category</span>
+                    </a>
+                </li>
+
+                <li class="">
+                    <a href="~/HelpDesk/ServiceCategory/Index">
+                        <i class="fa fa-list-alt"></i>
+                        <span class="title">List Service Category</span>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+        <!-- MAIN MENU - END -->
+
+    </div>
+    <!--  SIDEBAR - END -->
+    <!-- START CONTENT -->
+    <section id="main-content" class=" ">
+        <div class="wrapper main-wrapper row" style=''>
+            @Html.Partial("_AlertMessages")
+            @RenderBody()
+            <div class="json-overlay"></div>
+        </div>
+    </section>
+    <!-- END CONTENT -->
+</div>
+<style>
+    .json-overlay {
+        background: #e9e9e9;
+        background-image: url('/images/loader.gif');
+        background-repeat: no-repeat;
+        background-position: center;
+        display: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        opacity: 0.5;
+    }
+</style>

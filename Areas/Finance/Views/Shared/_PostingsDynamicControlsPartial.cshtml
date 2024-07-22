@@ -1,0 +1,145 @@
+﻿@model iSynergy.Areas.Finance.Models.JournalEntryViewModel
+
+
+<style type="text/css">
+    @* set the style for list items that are filled with JSON search results *@ .ui-menu-item {
+        background-color: #e45131;
+        width: 300pt;
+        color: white;
+        padding-left: 5pt;
+        cursor: pointer;
+        list-style: none;
+    }
+
+    .ui-menu-item:hover {
+        background-color: #e8962e;
+    }
+
+    .ui-helper-hidden-accessible {
+        @* hide the aria helper span*@ border: 0;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    }
+</style>
+
+<div class="form-horizontal">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+    <div class="form-group">
+        @*@Html.LabelFor(model => model.VoucherType, htmlAttributes: new { @class = "control-label col-md-2" })*@
+        <div class="col-md-12">
+            @Html.EnumDropDownListFor(x => x.VoucherType, "-- select voucher type --", htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(x => x.VoucherType, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @*@Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })*@
+        <div class="col-md-12">
+            @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control", placeholder = "Date" } })
+            @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @*@Html.LabelFor(model => model.Memo, htmlAttributes: new { @class = "control-label col-md-2" })*@
+        <div class="col-md-12">
+            @Html.EditorFor(model => model.Memo, new { htmlAttributes = new { @class = "form-control", placeholder = "Memo" } })
+            @Html.ValidationMessageFor(model => model.Memo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @*@Html.LabelFor(model => model.Postings, htmlAttributes: new { @class = "control-label col-md-2" })*@
+        <div class="col-md-12">
+            <table id="myTable" class="table  item-list">
+                <thead>
+                    <tr>
+                        <td class="col-md-1"></td>
+                        <td class="col-md-3">Account</td>
+                        <td class="col-md-2">Debit</td>
+                        <td class="col-md-2">Credit</td>
+                        <td class="col-md-3">Memo</td>
+                        <td class="col-md-1">Upload</td>
+                    </tr>
+                </thead>
+
+                <tbody id="tBody">
+                    @{
+                        var i = 0;
+                        while (i == 0 || i < Model.Postings.Count)
+                        {
+
+                            <tr id="dynamicRow">
+                                <td id="delBtn">
+                                    @if (i == 0)
+                                    {
+                                        <!--DO NOT DELETE THIS COMMENT-- <Span class="ibtnDel btn btn-sm btn-danger btn-icon"><i class="fa fa-close"></i></Span> -->
+                                    }
+                                    else
+                                    {
+                                        @*<input type="button" class="ibtnDel btn btn-sm btn-danger " value="Delete">*@
+                                        <Span class="ibtnDel btn btn-danger btn-sm btn-icon"><i class="fa fa-close"></i></Span>
+                                    }
+                                    @if (i == 0)
+                                    {
+                                        @:&nbsp;      
+                                    }
+                                </td>
+                                <td>
+                                    @Html.EditorFor(model => model.Postings[i].AccountId, new { htmlAttributes = new { @class = "form-control accountid" } })
+                                    @Html.ValidationMessageFor(model => model.Postings[i].AccountId, "", new { @class = "text-danger" })
+                                </td>
+                                <td>
+                                    @Html.EditorFor(model => model.Postings[i].Debit, new { htmlAttributes = new { @class = "form-control DebitColumn" } })
+                                    @*@Html.ValidationMessageFor(model => model.Postings[i].Debit, "", new { @class = "text-danger" })*@
+                                </td>
+                                <td>
+                                    @Html.EditorFor(model => model.Postings[i].Credit, new { htmlAttributes = new { @class = "form-control CreditColumn" } })
+                                    @*@Html.ValidationMessageFor(model => model.Postings[i].Credit, "", new { @class = "text-danger" })*@
+                                </td>
+                                <td>
+                                    @Html.EditorFor(model => model.Postings[i].Memo, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Postings[i].Memo, "", new { @class = "text-danger" })
+                                </td>
+                                <td>
+                                <td>
+                                    <input 
+                                           type="file" 
+                                           id="attachments" 
+                                           name="attachments[@i]" 
+                                           class="input-file" 
+                                           style="width: 200px"
+                                           accept=".bmp,.jpg,.png,.doc,.docx,.pdf">
+                                </td>
+
+                                
+                            </tr>
+                            i++;
+                        }
+                    }
+
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="col-md-12">
+                            <input type="button" class="btn btn-default" id="btnAddPostingControls" value="Add new row" />
+                        </td>
+                    </tr>
+                    <tr></tr>
+                </tfoot>
+            </table>
+            <div class="row bold">
+                <span class="col-md-4">Total</span>
+                <span id="DebitTotal" class="col-md-1"></span>
+                <span id="CreditTotal" class="col-md-1"></span>
+            </div>
+            <input type="hidden" id="totalPostings" value="@i" />
+        </div>
+    </div>
+</div>

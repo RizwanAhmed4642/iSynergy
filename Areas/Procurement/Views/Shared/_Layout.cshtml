@@ -1,0 +1,69 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Scripts{
+    @RenderSection("Scripts", false)
+}
+
+
+<div class="page-container row-fluid container-fluid">
+
+    <!-- SIDEBAR - START -->
+
+    <div class="page-sidebar fixedscroll">
+
+        <!-- MAIN MENU - START -->
+        <div class="page-sidebar-wrapper" id="main-menu-wrapper">
+
+
+            <ul class='wraplist'>
+                <li class="">
+                    <a href="~/Procurement/Requisitions/Create">
+                        <i class="fa fa-plus"></i>
+                        <span class="title">Create New Requisition</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="~/Procurement/Requisitions/Search">
+                        <i class="fa fa-search"></i>
+                        <span class="title">Search Requisition</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="~/Procurement/Requisitions">
+                        <i class="fa fa-list-alt"></i>
+                        <span class="title">My Requisition</span>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+        <!-- MAIN MENU - END -->
+
+    </div>
+    <!--  SIDEBAR - END -->
+    <!-- START CONTENT -->
+    <section id="main-content" class=" ">
+        <div class="wrapper main-wrapper row" style=''>
+            @Html.Partial("_AlertMessages")
+            @RenderBody()
+            <div class="json-overlay"></div>
+        </div>
+    </section>
+    <!-- END CONTENT -->
+</div>
+<style>
+    .json-overlay {
+        background: #e9e9e9;
+        background-image: url('/images/loader.gif');
+        background-repeat: no-repeat;
+        background-position: center;
+        display: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        opacity: 0.5;
+    }
+</style>

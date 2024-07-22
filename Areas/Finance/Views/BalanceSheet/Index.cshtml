@@ -1,0 +1,580 @@
+﻿@model iSynergy.Areas.Finance.Models.BalanceSheetViewModel
+<style>
+    .balanceSheet {
+        width: 100%;
+        border-spacing: 10px;
+        border-collapse: separate;
+    }
+</style>
+
+@{
+    ViewBag.Title = "Balance Sheet";
+    string format = "#,##0.00;(#,##0.00)";
+    List<int> years = new List<int>();
+    var sartingYear = Model.startingYear;
+    if (Model.yearsSpan == 0)
+    {
+        years.Add(sartingYear);
+    }
+    else if (Model.yearsSpan == 1)
+    {
+        for (int i = 0; i <= Model.yearsSpan; i++)
+        {
+            years.Add(sartingYear++);
+        }
+    }
+    else
+    {
+        for (int i = 0; i < Model.yearsSpan; i++)
+        {
+            years.Add(sartingYear++);
+        }
+    }
+
+}
+
+@if (Model.Assets != null && Model.Assets.Count > 0)
+{
+    <div style="text-align:right">
+        <a id="export" href="#"><Span class="btn btn-success btn-icon background"><i class="fa fa-file-excel-o"></i> &nbsp; Export</Span></a>
+        <button id="printBtn" type="button" class="btn btn-success">Print!</button>
+    </div>
+
+    <section class="box">
+        <header class="panel_header"></header>
+        <div class="content-body">
+            <div id="ledger" class="row">
+                <!-- Assets-->
+                <div class="col-xs-12">
+                    <div class="" data-pattern="priority-columns">
+                        <table class="balanceSheet">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-9">@*Sub Group*@</th>
+                                    @foreach (var year in years)
+                                    {
+                                        <th style="text-align:center;">@year</th>
+                                    }
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <!------------ Assets ------------>
+                                <tr>
+                                    <td align="center" style="text-decoration:underline">
+                                        <h3>
+                                            @Html.ActionLink("Assets", "Detail", "Ledgers", new { id = "01" }, null)
+                                        </h3>
+                                    </td>
+                                    @foreach (var year in years)
+                                    {
+                                        <td></td>
+                                    }
+                                </tr>
+                                @{
+                                    var groups = (from asset in Model.Assets
+                                                  group asset by new { asset.AccountGroup } into g
+                                                  select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                                  {
+                                                      AccountClass = g.FirstOrDefault().AccountClass,
+                                                      AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                      AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                      Year = g.FirstOrDefault().Year,
+                                                      Balance = g.Sum(x => x.Balance)
+                                                  }
+                                                ).ToList();
+
+                                    foreach (var accountGroup in groups)
+                                    {
+                                        <tr>
+                                            <td style="padding-left:20pt">
+                                                <strong>
+                                                    @Html.ActionLink(accountGroup.AccountGroup.Title, "Detail", "Ledgers", new { id = accountGroup.AccountGroup.AccountGroupId }, null)
+                                                </strong>
+                                            </td>
+                                            <!------------ Assets : Group Totals ------------>
+                                            @{
+                                                var assets = (from asset in Model.Assets
+                                                              where asset.AccountGroup == accountGroup.AccountGroup
+                                                              group asset by new { asset.AccountGroup, asset.Year } into g
+                                                              select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                                              {
+                                                                  AccountClass = g.FirstOrDefault().AccountClass,
+                                                                  AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                                  AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                                  Year = g.FirstOrDefault().Year,
+                                                                  Balance = g.Sum(x => x.Balance)
+                                                              }
+                                                              ).ToList();
+
+                                            }
+                                            @foreach (var year in years)
+                                            {
+                                                <td align="right" style="font-weight:bold">
+                                                    @foreach (var asset in assets)
+                                                    {
+                                                        var balance = (decimal)asset.Balance;
+                                                        @(asset.Year == year ? balance.ToString(format) : "")
+                                                    }
+                                                </td>
+                                            }
+                                        </tr>
+                                        <!------------ Assets : Sub Group Totals ------------>
+                                                var subGroups = (from asset in Model.Assets
+                                                                 where asset.AccountGroup == accountGroup.AccountGroup
+                                                                 group asset by new { asset.AccountSubGroup } into g
+                                                                 select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                                                 {
+                                                                     AccountClass = g.FirstOrDefault().AccountClass,
+                                                                     AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                                     AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                                     Year = g.FirstOrDefault().Year,
+                                                                     Balance = g.Sum(x => x.Balance)
+                                                                 }
+                                                                ).ToList();
+
+                                                foreach (var subGroup in subGroups)
+                                                {
+                                                    <tr>
+                                                        <td style="padding-left:40pt">
+                                                            @Html.ActionLink(subGroup.AccountSubGroup.Title, "Detail", "Ledgers", new { id = subGroup.AccountSubGroup.AccountSubGroupId }, null)
+                                                        </td>
+                                                        @{
+                                                            assets = (from asset in Model.Assets
+                                                                      where asset.AccountGroup == accountGroup.AccountGroup
+                                                                      && asset.AccountSubGroup == subGroup.AccountSubGroup
+                                                                      group asset by new { asset.AccountGroup, asset.AccountSubGroup, asset.Year } into g
+                                                                      select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                                                      {
+                                                                          AccountClass = g.FirstOrDefault().AccountClass,
+                                                                          AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                                          AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                                          Year = g.FirstOrDefault().Year,
+                                                                          Balance = g.Sum(x => x.Balance)
+                                                                      }
+                                                                            ).ToList();
+
+                                                        }
+
+                                                        @foreach (var year in years)
+                                                        {
+                                                            <td align="right">
+                                                                @foreach (var asset in assets)
+                                                                {
+                                                                    var balance = (decimal)asset.Balance;
+                                                                    @(asset.Year == year ? balance.ToString(format) : "")
+                                                                }
+
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                                }
+                                                            }
+
+                                }
+
+                                <tr style="font-weight:bold;">
+                                    <td align="right"></td>
+                                    @foreach (var year in years)
+                                    {
+                                        var yearlyTotal = (decimal)(from asset in Model.Assets
+                                                                    where asset.Year == year
+                                                                    select asset.Balance).Sum();
+
+                                        <td align="right" style="border-top:solid; border-bottom:double">@yearlyTotal.ToString(format)</td>
+                                    }
+
+                                </tr>
+
+                                <!------------ Liabilities ------------>
+                                <tr>
+                                    <td align="center" style="text-decoration:underline">
+                                        <h3>
+                                            @Html.ActionLink("Liabilities", "Detail", "Ledgers", new { id = "02" }, null)
+                                        </h3>
+                                    </td>
+                                    @foreach (var year in years)
+                                    {
+                                        <td></td>
+                                    }
+
+                                </tr>
+                                @{
+                                    groups = (from liability in Model.Liabilities
+                                              group liability by new { liability.AccountGroup } into g
+                                              select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                              {
+                                                  AccountClass = g.FirstOrDefault().AccountClass,
+                                                  AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                  AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                  Year = g.FirstOrDefault().Year,
+                                                  Balance = g.Sum(x => x.Balance)
+                                              }
+                                             ).ToList();
+
+                                    foreach (var accountGroup in groups)
+                                    {
+                                        <tr>
+                                            <td style="padding-left:20pt">
+                                                <strong>
+                                                    @Html.ActionLink(accountGroup.AccountGroup.Title, "Detail", "Ledgers", new { id = accountGroup.AccountGroup.AccountGroupId }, null)
+                                                </strong>
+                                            </td>
+                                            <!------------ Liabilities : Group Totals ------------>
+                                            @{
+                                                var liabilities = (from liability in Model.Liabilities
+                                                                   where liability.AccountGroup == accountGroup.AccountGroup
+                                                                   group liability by new { liability.AccountGroup, liability.Year } into g
+                                                                   select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                                                   {
+                                                                       AccountClass = g.FirstOrDefault().AccountClass,
+                                                                       AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                                       AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                                       Year = g.FirstOrDefault().Year,
+                                                                       Balance = g.Sum(x => x.Balance)
+                                                                   }
+                                                              ).ToList();
+
+                                            }
+                                            @foreach (var year in years)
+                                            {
+                                                <td align="right" style="font-weight:bold">
+                                                    @foreach (var liability in liabilities)
+                                                    {
+                                                        var balance = (decimal)liability.Balance;
+                                                        @(liability.Year == year ? balance.ToString(format) : "")
+                                                    }
+                                                </td>
+                                            }
+                                        </tr>
+                                        <!------------ Liabilities : Sub Group Totals ------------>
+                                                var subGroups = (from liability in Model.Liabilities
+                                                                 where liability.AccountGroup == accountGroup.AccountGroup
+                                                                 group liability by new { liability.AccountSubGroup } into g
+                                                                 select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                                                 {
+                                                                     AccountClass = g.FirstOrDefault().AccountClass,
+                                                                     AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                                     AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                                     Year = g.FirstOrDefault().Year,
+                                                                     Balance = g.Sum(x => x.Balance)
+                                                                 }
+                                                                ).ToList();
+
+                                                foreach (var subGroup in subGroups)
+                                                {
+                                                    <tr>
+                                                        <td style="padding-left:40pt">
+                                                            @Html.ActionLink(subGroup.AccountSubGroup.Title, "Detail", "Ledgers", new { id = subGroup.AccountSubGroup.AccountSubGroupId }, null)
+                                                        </td>
+                                                        @{
+                                                            liabilities = (from liability in Model.Liabilities
+                                                                           where liability.AccountGroup == accountGroup.AccountGroup
+                                                                           && liability.AccountSubGroup == subGroup.AccountSubGroup
+                                                                           group liability by new { liability.AccountGroup, liability.AccountSubGroup, liability.Year } into g
+                                                                           select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                                                           {
+                                                                               AccountClass = g.FirstOrDefault().AccountClass,
+                                                                               AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                                               AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                                               Year = g.FirstOrDefault().Year,
+                                                                               Balance = g.Sum(x => x.Balance)
+                                                                           }
+                                                                              ).ToList();
+                                                        }
+                                                        @foreach (var year in years)
+                                                        {
+
+                                                            <td align="right">
+                                                                @foreach (var liability in liabilities)
+                                                                {
+                                                                    var balance = (decimal)liability.Balance;
+                                                                    @(liability.Year == year ? balance.ToString(format) : "")
+                                                                }
+
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                                }
+                                                            }
+
+                                }
+                                <tr style="font-weight:bold;">
+                                    <td align="right"></td>
+                                    @foreach (var year in years)
+                                    {
+                                        var yearlyTotal = (decimal)(from liability in Model.Liabilities
+                                                                    where liability.Year == year
+                                                                    select liability.Balance).Sum();
+
+                                        <td align="right" style="border-top:solid">@yearlyTotal.ToString(format)</td>
+                                    }
+
+                                </tr>
+
+
+                                <!------------ Equity ------------>
+                                <tr>
+                                    <td align="center" style="text-decoration:underline">
+                                        <h3>
+                                            @Html.ActionLink("Equity", "Detail", "Ledgers", new { id = "03" }, null)
+                                        </h3>
+                                    </td>
+                                    @foreach (var year in years)
+                                    {
+                                        <td></td>
+                                    }
+                                </tr>
+                                @{
+                                    groups = (from equity in Model.Equity
+                                              group equity by new { equity.AccountGroup } into g
+                                              select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                              {
+                                                  AccountClass = g.FirstOrDefault().AccountClass,
+                                                  AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                  AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                  Year = g.FirstOrDefault().Year,
+                                                  Balance = g.Sum(x => x.Balance)
+                                              }
+                                             ).ToList();
+
+                                    foreach (var accountGroup in groups)
+                                    {
+                                        <tr>
+                                            <td style="padding-left:20pt">
+                                                <strong>
+                                                    @Html.ActionLink(accountGroup.AccountGroup.Title, "Detail", "Ledgers", new { id = accountGroup.AccountGroup.AccountGroupId }, null)
+                                                </strong>
+                                            </td>
+                                            <!------------ Equity : Group Totals ------------>
+                                            @{
+                                                var equities = (from equity in Model.Equity
+                                                                where equity.AccountGroup == accountGroup.AccountGroup
+                                                                group equity by new { equity.AccountGroup, equity.Year } into g
+                                                                select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                                                {
+                                                                    AccountClass = g.FirstOrDefault().AccountClass,
+                                                                    AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                                    AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                                    Year = g.FirstOrDefault().Year,
+                                                                    Balance = g.Sum(x => x.Balance)
+                                                                }
+                                                              ).ToList();
+
+                                            }
+                                            @foreach (var year in years)
+                                            {
+                                                <td align="right" style="font-weight:bold">
+                                                    @foreach (var equity in equities)
+                                                    {
+                                                        var balance = (decimal)equity.Balance;
+                                                        @(equity.Year == year ? balance.ToString(format) : "")
+                                                    }
+                                                </td>
+                                            }
+                                        </tr>
+                                        <!------------ Equity : Sub Group Totals ------------>
+                                                var subGroups = (from equity in Model.Equity
+                                                                 where equity.AccountGroup == accountGroup.AccountGroup
+                                                                 group equity by new { equity.AccountSubGroup } into g
+                                                                 select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                                                 {
+                                                                     AccountClass = g.FirstOrDefault().AccountClass,
+                                                                     AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                                     AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                                     Year = g.FirstOrDefault().Year,
+                                                                     Balance = g.Sum(x => x.Balance)
+                                                                 }
+                                                                ).ToList();
+
+                                                foreach (var subGroup in subGroups)
+                                                {
+                                                    <tr>
+                                                        <td style="padding-left:40pt">
+                                                            @Html.ActionLink(subGroup.AccountSubGroup.Title, "Detail", "Ledgers", new { id = subGroup.AccountSubGroup.AccountSubGroupId }, null)
+                                                        </td>
+                                                        @{
+                                                            equities = (from equity in Model.Equity
+                                                                        where equity.AccountGroup == accountGroup.AccountGroup
+                                                                        && equity.AccountSubGroup == subGroup.AccountSubGroup
+                                                                        group equity by new { equity.AccountGroup, equity.AccountSubGroup, equity.Year } into g
+                                                                        select new iSynergy.Areas.Finance.Models.YearlyBalanceViewModel()
+                                                                        {
+                                                                            AccountClass = g.FirstOrDefault().AccountClass,
+                                                                            AccountGroup = g.FirstOrDefault().AccountGroup,
+                                                                            AccountSubGroup = g.FirstOrDefault().AccountSubGroup,
+                                                                            Year = g.FirstOrDefault().Year,
+                                                                            Balance = g.Sum(x => x.Balance)
+                                                                        }
+                                                                            ).ToList();
+                                                        }
+
+                                                        @foreach (var year in years)
+                                                        {
+                                                            <td align="right">
+                                                                @foreach (var equity in equities)
+                                                                {
+                                                                    var balance = (decimal)equity.Balance;
+                                                                    @(equity.Year == year ? balance.ToString(format) : "")
+                                                                }
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                                }
+                                                            }
+
+                                }
+
+                                <tr style="font-weight:bold;">
+                                    <td align="right"></td>
+                                    @foreach (var year in years)
+                                    {
+                                        var yearlyTotal = (decimal)(from equity in Model.Equity
+                                                                    where equity.Year == year
+                                                                    select equity.Balance).Sum();
+
+                                        <td align="right" style="border-top:solid">@yearlyTotal.ToString(format)</td>
+                                    }
+
+                                </tr>
+
+                                <!--  Retained Earning  -->
+                                <tr>
+                                    <td style="padding-left:20pt">
+                                        Retained Earning
+                                    </td>
+                                    @foreach (var year in years)
+                                    {
+                                        <td align="right">
+                                            @iSynergy.Areas.Finance.Shared.FinanceOperations.getIncomeStatementModel(Model.fromDate, Model.asOfDate).getNetEarning(year).ToString(format)
+                                        </td>
+                                    }
+                                </tr>
+
+                                <!--  NET EFFECT  -->
+                                <tr style="font-weight:bold;">
+                                    <td align="right"></td>
+                                    @{
+                                        foreach (var year in years)
+                                        {
+                                            var totalLiabilities = (decimal)(from liability in Model.Liabilities
+                                                                             where liability.Year == year
+                                                                             select liability.Balance).Sum();
+
+                                            var totalEquity = (decimal)(from equity in Model.Equity
+                                                                        where equity.Year == year
+                                                                        select equity.Balance).Sum();
+
+                                            var retainedEarning = iSynergy.Areas.Finance.Shared.FinanceOperations.getIncomeStatementModel(Model.fromDate, Model.asOfDate).getNetEarning(year);
+
+                                            <td align="right" style="border-top:solid; border-bottom:double">@((totalLiabilities + retainedEarning + totalEquity).ToString(format))</td>
+                                        }
+                                    }
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+                                        }
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">Balance Sheet Filters</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+                @using (Html.BeginForm("Index", "BalanceSheet", FormMethod.Post, new { id = "gliForm" }))
+                {
+                    <div class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.asOfDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.asOfDate, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.asOfDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Submit" class="btn btn-success" />
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<div hidden="hidden">
+    <div id="printThis" style="padding-left:30px;padding-right:30px;">
+        <table style="width:100%;">
+            <tr>
+                <td style="width:50%;">
+                    <table style="width: 100%; margin-bottom:40px;">
+                        <tbody>
+                            <tr>
+                                <td style="width: 97%;" colspan="2">
+                                    <h3>Balance Sheet as of @Model.asOfDate.ToString("dd-MMM-yyyy")</h3>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 25%;">&nbsp;</td>
+                                <td style="width: 75%;">&nbsp;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td style="width:50%;">
+                    <table style="width: 100%; margin-bottom:40px;">
+                        <tr>
+                            <td align="center">
+                                <div style="height:100px;">
+                                    <img src="@Url.Content("~" + iSynergy.Shared.AppSettings.getKey("CompanyLogo"))" alt="Company Logo" style="width:100%;height:100%;object-fit:contain;" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <h3>@iSynergy.Shared.AppSettings.getKey("CompanyName")</h3>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/jQuery.print.min.js"></script>
+    <script>
+        $('#printBtn').on('click', function () {
+            $("#ledger").print({
+                title: "Balance Sheet - Printed by @Model.printedBy",
+                prepend: $('#printThis')
+            });
+        });
+    </script>
+    <script src="~/Scripts/jquery.table2excel.min.js"></script>
+    <script>
+        $('#export').click(function () {
+            $(".balanceSheet").table2excel({
+                exclude: ".noExl",
+                name: "Balance Sheet",
+                filename: "balancesheet" + new Date().toISOString().replace(/[\-\:\.]/g, ""),
+                fileext: ".xls",
+                exclude_img: true,
+                exclude_links: true,
+                exclude_inputs: true
+            });
+        });
+    </script>
+}

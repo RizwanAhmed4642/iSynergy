@@ -1,0 +1,138 @@
+﻿@model iSynergy.Areas.HelpDesk.ViewModel.ServiceRequestViewModel
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/HelpDesk/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    textarea, .form-control {
+        border: 1px solid #e1e1e1;
+        width: 100% !important;
+        height: 152%;
+    }
+</style>
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-danger" id="msgalert">
+        @TempData["Msg"].ToString()
+    </div>
+}
+
+<div class="col-md-offset-3">
+    <section class="col-md-9">
+        <header class="panel_header">
+            <h2 class="title pull-left">Add New Ticket</h2>
+        </header>
+        <div class="content-body col-md-12">
+
+
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Subject, "Subject", htmlAttributes: new { @class = "control-label col-md-3", style= "text-align:justify" })
+                                <div class="col-md-9">
+                                    @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control col-md-12" } })
+                                    <br/>
+                                    <br/>
+                                    @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DepartmentId, "Department", htmlAttributes: new { @class = "control-label col-md-3", style = "text-align:justify" })
+                                <div class="col-md-9">
+                                    @Html.DropDownList("DepartmentId", (IEnumerable<SelectListItem>)ViewBag.DepartmentId, "--- Select Department ---", new { @class = "form-control col-md-12", required = "required"  })
+                                    <br />
+                                    <br />
+                                    @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ServicesCategoryId, "Category", htmlAttributes: new { @class = "control-label col-md-3", style = "text-align:justify" })
+                                <div class="col-md-9">
+                                    @Html.DropDownList("ServicesCategoryId", (IEnumerable<SelectListItem>)ViewBag.ServiceCategoryId, "--- Select Service Category ---", new { @class = "form-control col-md-12", required = "required" })
+                                    <br />
+                                    <br />
+                                    @Html.ValidationMessageFor(model => model.ServicesCategoryId, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Priorty, "Priorty", htmlAttributes: new { @class = "control-label col-md-3", style = "text-align:justify" })
+                                <div class="col-md-9">
+                                    @Html.DropDownListFor(model => model.Priorty, Model.PriortyList, htmlAttributes: new { @class = "form-control col-md-12", required = "required" })
+                                    <br />
+                                    <br />
+                                    @Html.ValidationMessageFor(model => model.Priorty, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Description, "Description", htmlAttributes: new { @class = "control-label col-md-3", style = "text-align:justify" })
+                                <div class="col-md-9">
+                                    @Html.TextAreaFor(model => model.Description, new { htmlAttributes = new { @class = "form-control col-md-12", } })
+                                    <br />
+                                    <br />
+                                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Attachment, "Attchments", htmlAttributes: new { @class = "control-label col-md-3", style = "text-align:justify" })
+                                <div class="col-md-9">
+                                    <input type="file" name="Files" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            @Html.ActionLink("Back to List", "MyRequest","ServiceRequest",new {area="HelpDesk" })
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-6 col-md-1">
+                                <input type="submit" value="Create" class="btn btn-success" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+
+        </div>
+
+    </section>
+
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+

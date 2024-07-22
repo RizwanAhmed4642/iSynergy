@@ -1,0 +1,107 @@
+﻿@model iSynergy.Areas.HelpDesk.ViewModel.CountViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/HelpDesk/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+<link href="~/Content/CustomiseForCard.css" rel="stylesheet" />
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-sm-6">
+            <div class="card-box bg-orange">
+                <div class="inner">
+                    <h3>@Model.PendingRequestForMe</h3>
+                    <p>My Pending Requests</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                </div>
+                <a href="~/HelpDesk/ServiceRequest/PendingRequestForMe" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+
+
+
+        <div class="col-lg-4 col-sm-6">
+            <div class="card-box bg-green">
+                <div class="inner">
+                    <h3>@Model.AssignedRequest</h3>
+                    <p>Assigned Request To Employees</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                </div>
+                <a href="~/HelpDesk/ServiceRequest/AssignedRequestToEmployees" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <div class="card-box bg-blue">
+                <div class="inner">
+              
+                    <h3>@Model.TotalRequestForMe</h3>
+                    <p> Total Requests  </p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                </div>
+                <a href="~/HelpDesk/ServiceRequest/AllRequestForMe" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 col-sm-6">
+            <div class="card-box bg-red">
+                <div class="inner">
+                    <h3>@Model.MyTasks</h3>
+                    <p> My Tasks </p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-list-alt"></i>
+                </div>
+                <a href="~/HelpDesk/ServiceRequest/MyTask" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-sm-6">
+            <div class="card-box bg-accent">
+                <div class="inner">
+                    <h3>@Model.CompletedTasks</h3>
+                    <p>Completed Tasks</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                </div>
+                <a href="~/HelpDesk/ServiceRequest/CompletedMyTask" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <div class="card-box bg-primary">
+                <div class="inner">
+                    <h3>@Model.MyRequest</h3>
+                    <p>My Requests </p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                </div>
+                <a href="~/HelpDesk/ServiceRequest/MyRequest" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+    </div>
+</div>

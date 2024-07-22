@@ -1,0 +1,224 @@
+﻿@model iSynergy.Areas.Finance.Models.FiscalCalendarViewModel
+
+@{
+    ViewBag.Title = "Fiscal Year";
+}
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+
+
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2", value = Model.StartDate })
+                            <div class="col-md-10">
+                                @Html.DisplayFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Periods, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(model => model.Periods, new SelectList(ViewBag.listItems, "Text", "Value"), new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Periods, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NewStartDate, htmlAttributes: new { @class = "control-label col-md-2", value = Model.StartDate })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.NewStartDate, new { htmlAttributes = new { @Value = Model.NewStartDate.ToString("yyyy-MM-dd"), @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.NewStartDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Upate Calendar" class="btn btn-success" />
+                            </div>
+                        </div>
+
+
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</section>
+@if (Model.FrozenPeriods != null)
+{
+    if (Model.FrozenPeriods.Count > 0)
+    {
+        <section class="box" style="border-left: 3px solid #e77512;">
+            <header class="panel_header">
+                <h2 class="title pull-left">Frozen Periods</h2>
+            </header>
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-xs-12">
+
+                        <!-- Progress Bars -->
+                        <table class="table table-active">
+                            <tr>
+                                <th class="col-md-1">Period</th>
+                                <th class="col-md-2">Starts</th>
+                                <th class="col-md-2">Ends</th>
+                                <th class="col-md-5">Progress</th>
+                                <th class="col-md-2">Action</th>
+                            </tr>
+
+                            @for (int i = 0; i < Model.FrozenPeriods.Count; i++)
+                            {
+                                var period = Model.FrozenPeriods[i];
+                                var start = period.StartDate;
+                                var end = period.EndDate;
+                                var length = (end - start).Days;
+                                var lapsed = (DateTime.Today - start).Days;
+                                var lapsedPercentage = 100 * lapsed / length;
+
+                                <tr>
+                                    <td>@(i + 1)</td>
+                                    <td>@start.ToString("dd-MMM-yyyy")</td>
+                                    <td>@end.ToString("dd-MMM-yyyy")</td>
+                                    <td>
+                                        <div id="pBar" class="progress">
+                                            @{
+                                                var cls = "progress-bar progress-bar-warning progress-bar-striped active";
+                                                if (lapsedPercentage >= 100)
+                                                {
+                                                    cls = "progress-bar progress-bar-warning";
+                                                }
+                                            }
+                                            <div class="@cls" role="progressbar" aria-valuenow=@lapsedPercentage aria-valuemin="0" aria-valuemax="100" style="width: @lapsedPercentage%">
+                                                <span class="sr-only"></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("ReOpenPeriod", new { id = @period.FiscalPeriodId })">Re Open</a> |
+                                        <a href="@Url.Action("ClosePeriod", new { id = @period.FiscalPeriodId })">Close</a>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+}
+@if (Model.OpenPeriods != null)
+{
+    if (Model.OpenPeriods.Count > 0)
+    {
+        <section class="box" style="border-left: 3px solid #e77512;">
+            <header class="panel_header">
+                <h2 class="title pull-left">Open Periods</h2>
+            </header>
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-xs-12">
+
+                        <!-- Progress Bars -->
+                        <table class="table table-active">
+                            <tr>
+                                <th class="col-md-1">Period</th>
+                                <th class="col-md-2">Starts</th>
+                                <th class="col-md-2">Ends</th>
+                                <th class="col-md-5">Progress</th>
+                                <th class="col-md-2">Action</th>
+                            </tr>
+
+                            @for (int i = 0; i < Model.OpenPeriods.Count; i++)
+                            {
+                                var period = Model.OpenPeriods[i];
+                                var start = period.StartDate;
+                                var end = period.EndDate;
+                                var length = (end - start).Days;
+                                var lapsed = (DateTime.Today - start).Days;
+                                var lapsedPercentage = 100 * lapsed / length;
+
+                                <tr>
+                                    <td>@(i + 1)</td>
+                                    <td>@start.ToString("dd-MMM-yyyy")</td>
+                                    <td>@end.ToString("dd-MMM-yyyy")</td>
+                                    <td>
+                                        <div id="pBar" class="progress">
+                                            @{
+                                                var cls = "progress-bar progress-bar-warning progress-bar-striped active";
+                                                if (lapsedPercentage >= 100)
+                                                {
+                                                    cls = "progress-bar progress-bar-warning";
+                                                }
+                                            }
+                                            <div class="@cls" role="progressbar" aria-valuenow=@lapsedPercentage aria-valuemin="0" aria-valuemax="100" style="width: @lapsedPercentage%">
+                                                <span class="sr-only"></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (lapsedPercentage > 0)
+                                        {
+                                            @:<a href="@Url.Action("FreezePeriod", new { id = @period.FiscalPeriodId })">Freeze</a> |
+                                            <a href="@Url.Action("ClosePeriod", new { id = @period.FiscalPeriodId })">Close</a>
+                                        }
+                                    </td>
+                                </tr>
+                             }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+   }
+}
+
+<!-- Modal -->
+<div id="myModal" class="modal fade col-md-5" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <p>Some text in the modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <input type="submit" value="Upate" class="btn btn-success" />
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal -->
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            $("#NewStartDate").attr('min', "@Model.LatestFrozenOrClosedPeriodEndDate.ToString("yyyy-MM-dd")");
+            @*$("#StartDate").attr('max', "@Model.StartDate.AddMonths(Model.Periods).ToString("yyyy-MM-dd")");*@
+        });
+        $('#myModal').on('shown.bs.modal', function () {
+            $(this).find('.modal-dialog').css({
+                width: 'auto',
+                height: 'auto',
+                'max-height': '100%'
+            });
+        });
+    </script>
+}

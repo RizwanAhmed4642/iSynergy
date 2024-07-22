@@ -1,0 +1,40 @@
+﻿@model iSynergy.Areas.Finance.Models.JournalEntryViewModel
+
+@{
+    ViewBag.Title = "Journal Entry";
+}
+
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+                @using (Html.BeginForm("Create", "JournalEntries", FormMethod.Post, new { id = "jeForm", encType = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.Partial("_PostingsDynamicControlsPartial");
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input type="submit" value="Submit" class="btn btn-success col-md-offset-10" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    @Scripts.Render("~/Scripts/App/AccountIdAutoComplete.js")
+    @Scripts.Render("~/Scripts/App/DebitCreditTotalCalculator.js")
+    @Scripts.Render("~/Scripts/App/DynamicPostingItemsRendrer.js")
+    @Scripts.Render("~/Content/cryptonia_theme/assets/plugins/jquery-ui/smoothness/jquery-ui.min.js")
+    <link href="~/Content/cryptonia_theme/assets/plugins/jquery-ui/smoothness/jquery-ui.min.css" rel="stylesheet" />
+
+}

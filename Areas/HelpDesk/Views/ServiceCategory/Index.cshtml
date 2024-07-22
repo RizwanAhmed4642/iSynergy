@@ -1,0 +1,53 @@
+﻿@model IEnumerable<iSynergy.Areas.HelpDesk.Models.ServiceCategory>
+
+@{
+    ViewBag.Title = "Service Category";
+    Layout = "~/Areas/HelpDesk/Views/Shared/_Layout.cshtml";
+}
+
+
+<a href="@Url.Action("Create")"><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-plus"></i> &nbsp; Add New Service</Span></a>
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+                @{int i = 1;}
+                <table class="table">
+                    <tr>
+
+                        <th>Sr No.</th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Name)
+                        </th>
+
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @i
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+
+                            <td>
+                                <a href="@Url.Action("Edit", "ServiceCategory", new { id = item.Id })"><span><i class="fa fa-pencil"></i></span></a>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</section>
+

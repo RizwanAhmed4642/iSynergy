@@ -1,0 +1,148 @@
+﻿@model IEnumerable<iSynergy.Areas.Inventory.Models.Computer>
+
+@{
+    ViewBag.Title = "Computers";
+}
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <a href="@Url.Action("AddComputer")"><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-plus"></i> &nbsp; Add New Computer</Span></a>
+                <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+                <table id="grid" class="display" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Property of
+                            </th>
+                            <th>
+                                Custodian
+                            </th>
+                            <th>
+                                Serial Number
+                            </th>
+                            <th>
+                                Manufacturer
+                            </th>
+                            <th>
+                                Model
+                            </th>
+                            <th>
+                                Procesor
+                            </th>
+                            <th>
+                                RAM
+                            </th>
+                            <th>
+                                Hard Disk
+                            </th>
+                            <th>
+                                Supplier
+                            </th>
+
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Property of
+                            </th>
+                            <th>
+                                Custodian
+                            </th>
+                            <th>
+                                Serial Number
+                            </th>
+                            <th>
+                                Manufacturer
+                            </th>
+                            <th>
+                                Model
+                            </th>
+                            <th>
+                                Procesor
+                            </th>
+                            <th>
+                                RAM
+                            </th>
+                            <th>
+                                Hard Disk
+                            </th>
+                            <th>
+                                Supplier
+                            </th>
+
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Office.Location)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Employee.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.SerialNumber)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Manufacturer)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Model)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Processor)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.RAM)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.HardDisk)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Supplier.Name)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "EditComputer", new { id = item.AssetId }) |
+                                    @Html.ActionLink("Dispose", "DisposeComputer", new { id = item.AssetId })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts{
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#grid').DataTable({
+                "pageLength": 100
+            });
+        });
+    </script>
+}

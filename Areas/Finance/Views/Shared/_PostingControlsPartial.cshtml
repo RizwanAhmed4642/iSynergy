@@ -1,0 +1,99 @@
+﻿@model iSynergy.Areas.Finance.Models.JournalEntryViewModel
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Postings, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        <table id="myTable" class="table  item-list">
+            <thead>
+                <tr>
+                    <td>Account</td>
+                    <td>Debit</td>
+                    <td>Credit</td>
+                    <td>Memo</td>
+                    <td></td>
+                </tr>
+            </thead>
+
+            <tbody id="tBody">
+                @{
+                    var i = 0;
+                    while (i == 0 || i < Model.Postings.Count)
+                    {
+
+                        <tr id="dynamicRow">
+                            <td class="col-md-4">
+                                @if (i == 0 && Model.Postings.Count == 1 && Model.JournalId == 0)
+                                {
+                                    @Html.DropDownListFor(
+                                                              model => model.Postings[0].AccountId,
+                                                              new SelectList(
+                                                                  ViewBag.Accounts,
+                                                                  "AccountId",
+                                                                  "Title"
+                                                              ),
+                                                              "--select account--",
+                                                              htmlAttributes: new { @class = "form-control" }
+                                                              );
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(
+                                                              model => model.Postings[i].AccountId,
+                                                              new SelectList(
+                                                                  ViewBag.Accounts,
+                                                                  "AccountId",
+                                                                  "Title",
+                                                                  Model.Postings[i].AccountId
+                                                              ),
+                                                              Model.Postings[i].Account.Title,
+                                                              htmlAttributes: new { @class = "form-control" }
+                                                          );
+                                }
+
+
+                                @Html.ValidationMessageFor(model => model.Postings[i].AccountId, "", new { @class = "text-danger" })
+                            </td>
+                            <td class="col-md-2">
+                                @Html.EditorFor(model => model.Postings[i].Debit, new { htmlAttributes = new { @class = "form-control" } })
+                                @*@Html.ValidationMessageFor(model => model.Postings[i].Debit, "", new { @class = "text-danger" })*@
+                            </td>
+                            <td class="col-md-2">
+                                @Html.EditorFor(model => model.Postings[i].Credit, new { htmlAttributes = new { @class = "form-control" } })
+                                @*@Html.ValidationMessageFor(model => model.Postings[i].Credit, "", new { @class = "text-danger" })*@
+                            </td>
+                            <td class="col-md-3">
+                                @Html.EditorFor(model => model.Postings[i].Memo, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Postings[i].Memo, "", new { @class = "text-danger" })
+                            </td>
+                            <td id="delBtn" class="col-md-1">
+                                @if (i == 0)
+                                {
+                                                            <!--DO NOT DELETE THIS COMMENT-- <input type="button" class="ibtnDel btn btn-sm btn-danger " value="Delete"> -->
+                                }
+                                else
+                                {
+                                    <input type="button" class="ibtnDel btn btn-sm btn-danger " value="Delete">
+                                }
+
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5" class="col-md-12">
+                        <input type="button" class="btn btn-default" id="btnAddPostingControls" value="Add new row" />
+                    </td>
+                </tr>
+                <tr></tr>
+            </tfoot>
+        </table>
+        <input type="hidden" id="totalPostings" value="@i" />
+    </div>
+</div>
+
+
+

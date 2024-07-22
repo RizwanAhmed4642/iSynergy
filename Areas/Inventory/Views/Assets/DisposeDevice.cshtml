@@ -1,0 +1,63 @@
+﻿@model iSynergy.Areas.Inventory.Models.Device
+
+@{
+    ViewBag.Title = "Dispose Device";
+}
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(model => model.AssetId)
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DisposalReason, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.RadioButtonFor(model => model.DisposalReason, (int)iSynergy.Areas.Inventory.Models.DisposalReasons.Broken, new { id = "rbBroken", htmlAttributes = new { @class = "form-control" } })
+                                @Html.Label("rbBroken", "Broken")
+                                <p></p>
+                                @Html.RadioButtonFor(model => model.DisposalReason, (int)iSynergy.Areas.Inventory.Models.DisposalReasons.Lost, new { id = "rbLost", htmlAttributes = new { @class = "form-control" } })
+                                @Html.Label("rbLost", "Lost")
+                                <p></p>
+                                @Html.RadioButtonFor(model => model.DisposalReason, (int)iSynergy.Areas.Inventory.Models.DisposalReasons.OutOfOrder, new { id = "rbOutOfOrder", htmlAttributes = new { @class = "form-control" } })
+                                @Html.Label("rbOutOfOrder", "Out of order")
+                                @Html.ValidationMessageFor(model => model.DisposalReason, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label("Comments", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.DisposalComments, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.DisposalComments, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Add Computer" class="btn btn-success" />
+                            </div>
+                        </div>
+                    </div>
+
+
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,71 @@
+﻿@model IEnumerable<iSynergy.Areas.HR.Models.Office>
+
+@{
+    ViewBag.Title = "Offices";
+}
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+                <a href="@Url.Action("Create")"><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-plus"></i> &nbsp; Add New Office</Span></a>
+                <table class="table">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OfficeId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Location)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LocalOperationsHeadId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LocalFinanceHeadId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LocalProcurementManagerId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LocalHrManagerId)
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.OfficeId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Location)
+                            </td>
+                            <td>
+                                @ViewBag.employeeIdtoNameDictonary[item.LocalOperationsHeadId]
+                            </td>
+                            <td>
+                                @ViewBag.employeeIdtoNameDictonary[item.LocalFinanceHeadId]
+                            </td>
+                            <td>
+                                @ViewBag.employeeIdtoNameDictonary[item.LocalProcurementManagerId]
+                            </td>
+                            <td>
+                                @ViewBag.employeeIdtoNameDictonary[item.LocalHrManagerId]
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Edit", "Offices", new { id = item.OfficeId })"><span><i class="fa fa-pencil"></i></span></a>
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+</section>

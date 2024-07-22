@@ -1,0 +1,139 @@
+﻿@model IEnumerable<iSynergy.Areas.HR.Models.Employee>
+
+@{
+    ViewBag.Title = "Employees";
+}
+
+<section class="box" style="border-left: 3px solid #e77512">
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <a href="@Url.Action("Create")"><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-plus"></i> &nbsp; Add New Employee</Span></a>
+                &nbsp;
+                <a href="@Url.Action("UploadEmployees")"><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-upload"></i> &nbsp; Upload Employee</Span></a>
+
+                <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+
+                <table id="grid" class="display" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.EmployeeId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Email)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Department.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Designation.Title)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Office.Location)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ManagerId)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.EmployeeId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Email)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Department.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Designation.Title)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Office.Location)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ManagerId)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EmployeeId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Email)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Department.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Designation.Title)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Office.Location)
+                                </td>
+                                <td>
+                                    @*@Html.DisplayFor(modelItem => item.ManagerId)*@
+                                    @if (!(item.ManagerId == -1))
+                                    {
+                                        @ViewBag.employeeIdToNameConverter[item.ManagerId]
+                                    }
+                                    else
+                                    {
+                                        <div>None.</div>
+                                    }
+
+                                </td>
+
+                                <td align="center">
+                                    @if (!(item.ManagerId == -1))
+                                    {
+                                        <a href="@Url.Action("Edit", "Employees", new { id = item.EmployeeId })"><span><i class="fa fa-pencil"></i></span></a> 
+                                    }
+                                </td>
+                            </tr>
+
+
+                        }
+                    </tbody>
+
+                </table>
+                <a href="~/HR/Employees/UploadEmployees"><Span class="btn btn-success btn-icon background bottom15"><i class="fa fa-upload"></i> &nbsp; Upload Employees</Span></a>
+                &nbsp;<a href="~/Data/Employees.csv">Click here to download the sample .CSV file</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts{
+<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#grid').DataTable({
+                "pageLength": 100
+            });
+        });
+    </script>
+}

@@ -1,0 +1,135 @@
+﻿@model iSynergy.Areas.Procurement.Models.RequisitionViewModel
+
+@{
+    ViewBag.Title = "Create New Requisition";
+}
+
+<section class="box has-border-left-3" >
+    <header class="panel_header">
+        <h2 class="title pull-left">@ViewBag.Title</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+
+                @using (Html.BeginForm("Create", "Requisitions", FormMethod.Post, new { area = "Procurement", encType = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-horizontal">
+                        @* add control for requisition description*@
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.requisitionDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.requisitionDescription, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.requisitionDescription, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        @* add table for requsition items. *@
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.requisitionItems, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <table id="myTable" class="table  item-list">
+                                    <thead>
+                                        <tr>
+                                            <td>Item</td>
+                                            <td>Quantity</td>
+                                            <td>Price</td>
+                                            <td>Attachment</td>
+                                            <td></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="col-md-4">
+                                                @* to acheive model binding for dynamic list I used help from this article *@
+                                                @* http://haacked.com/archive/2008/10/23/model-binding-to-a-list.aspx/ *@
+                                                <input type="hidden" name="requisitionItems.Index" value="0" />
+                                                <input type="text" name="requisitionItems[0].ItemName" class="form-control" data-val="true" data-val-required="Please provide item name" />
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="requisitionItems[0].ItemName" data-valmsg-replace="true"></span>
+                                            </td>
+                                            <td class="col-md-1">
+                                                <input type="text" name="requisitionItems[0].Quantity" class="form-control" data-val="true" data-val-number="Quantity must be a number." data-val-required="Please provide quantity" />
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="requisitionItems[0].Quantity" data-valmsg-replace="true"></span>
+                                            </td>
+                                            <td class="col-md-1">
+                                                <input type="text" name="requisitionItems[0].UnitPrice" class="form-control" data-val="true" data-val-number="Price must be a number." />
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="requisitionItems[0].UnitPrice" data-valmsg-replace="true"></span>
+                                            </td>
+                                            <td class="col-md-5">
+                                                <input type="hidden" name="ItemFiles.Index" value="0" />
+                                                <input type="file" id="ItemFile0" name="ItemFiles[0]" class="input-file" accept=".bmp,.jpg,.png,.doc,.docx,.pdf">
+                                            </td>
+                                            <td class="col-md-1"></td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="5" class="col-md-12">
+                                                <input type="button" class="btn btn-lg btn-block" id="btnAddRequistionItem" value="Add new item" />
+                                            </td>
+                                        </tr>
+                                        <tr></tr>
+                                    </tfoot>
+                                </table>
+
+                            </div>
+                        </div>
+
+                        @* add table for quotations. *@
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.requisitionQuotations, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <table id="myTable" class="table quotation-list">
+                                    <thead>
+                                        <tr>
+                                            <td>Supplier</td>
+                                            <td>Price</td>
+                                            <td>Attachment</td>
+                                            <td></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @* dynamically create quotations table here *@
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="5" class="col-md-12">
+                                                <input type="button" class="btn btn-lg btn-block" id="btnAddQuotation" value="Add new quotation" />
+                                            </td>
+                                        </tr>
+                                        <tr></tr>
+                                    </tfoot>
+                                </table>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input id="btnSubmitRequisition" type="submit" value="Submit for approval" class="btn btn-lg btn-success btn-block " />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/App/DynamicRequisitionItemsRendrer.js")
+    @Scripts.Render("~/Scripts/App/DynamicRequisitionQuotationsRendrer.js")
+}
+
+
+
+

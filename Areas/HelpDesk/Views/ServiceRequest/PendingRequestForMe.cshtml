@@ -1,0 +1,80 @@
+﻿
+@model IEnumerable<iSynergy.Areas.HelpDesk.ViewModel.ServiceRequestViewModel>
+@{
+    ViewBag.Title = "RequestForMe";
+    Layout = "~/Areas/HelpDesk/Views/Shared/_Layout.cshtml";
+}
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-success" id="msgalert">
+        @TempData["Msg"].ToString()
+    </div>
+}
+
+
+
+
+<section class="box" style="border-left: 3px solid #e77512;">
+    <header class="panel_header">
+        <h2 class="title pull-left">Tickets Received</h2>
+    </header>
+    <div class="content-body">
+        <div class="row">
+            <div class="col-xs-12">
+                @{int i = 1;}
+                <table class="table">
+                    <tr>
+
+                        <th>Sr No.</th>
+                        <th>
+                            Request User
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Subject)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Priorty)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.status)
+                        </th>
+
+
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @i
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Subject)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Priorty)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.status)
+                            </td>
+
+                            <td>
+                                <a href="@Url.Action("AssignRequest", "ServiceRequest", new { id = item.Id })"><span class="btn btn-info">Assign</span></a>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
